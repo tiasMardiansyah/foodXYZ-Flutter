@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_xyz_project/custom_widget.dart';
+import 'package:food_xyz_project/screens/daftar_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -81,7 +82,7 @@ class _LoginFormState extends State<LoginForm> {
               minimumSize: const Size.fromHeight(50),
             ),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => DaftarScreen()))
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const DaftarScreen()));
             },
             child: const Text('Daftar'),
           ),

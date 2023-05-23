@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:food_xyz_project/custom_widget.dart';
 
 class DaftarScreen extends StatelessWidget {
+  const DaftarScreen({super.key});
+
   @override
   Widget build(context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Padding(
-        padding: const EdgeInsets.all(40.0),
+        padding: EdgeInsets.all(40.0),
         child: Scaffold(
           body: FormHandler(),
         ),
@@ -16,7 +18,7 @@ class DaftarScreen extends StatelessWidget {
 }
 
 class FormHandler extends StatefulWidget {
-  FormHandler({super.key});
+  const FormHandler({super.key});
 
   @override
   State<FormHandler> createState() => _FormHandlerState();
@@ -124,7 +126,7 @@ class _FormHandlerState extends State<FormHandler> {
               minimumSize: const Size.fromHeight(50),
             ),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => DaftarScreen()))
+              Navigator.pop(context);
             },
             child: const Text('Daftar'),
           ),
