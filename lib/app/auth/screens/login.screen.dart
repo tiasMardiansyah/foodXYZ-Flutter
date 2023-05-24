@@ -1,6 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:food_xyz_project/custom_widget.dart';
-import 'package:food_xyz_project/screens/daftar_screen.dart';
+import 'package:food_xyz_project/app/home/pages/invoice.screen.dart';
+import 'package:food_xyz_project/app/auth/widgets/custom_password_form.widget.dart';
+import 'package:food_xyz_project/app/auth/screens/daftar.screen.dart';
+import 'package:food_xyz_project/app/auth/widgets/custom_text_form.widget.dart';
+
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(45),
+          child: SingleChildScrollView(
+            child: LoginForm(),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -11,11 +31,9 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  void _submitForm() {
-
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -23,7 +41,7 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         children: [
           Image.asset(
-            'assets/images/fast_food.png',
+            'lib/app/assets/images/fast_food.png',
             width: 125,
           ),
           const Padding(
@@ -38,29 +56,20 @@ class _LoginFormState extends State<LoginForm> {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 10.0),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Username',
-                filled: true,
-                fillColor: Color.fromARGB(199, 221, 221, 221),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-              ),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Username Harus Diisi';
-                }
-                return null;
-              },
+            child: CustomTextFormField(
+              displayText: 'Username',
+              errorMessage: 'Username harus diisi',
+              controller: usernameController,
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 20.0),
-            child: PasswordTextFormField(),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: CustomPasswordFormField(
+              controller: passwordController,
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom:10.0),
+            padding: const EdgeInsets.only(bottom: 10.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -69,7 +78,12 @@ class _LoginFormState extends State<LoginForm> {
               ),
               onPressed: () {
                 if (_formkey.currentState!.validate()) {
-                  //lakukan sesuatu
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const InvoiceScreen(),
+                    ),
+                  );
                 }
               },
               child: const Text('Login'),
@@ -82,7 +96,10 @@ class _LoginFormState extends State<LoginForm> {
               minimumSize: const Size.fromHeight(50),
             ),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const DaftarScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const DaftarScreen()));
             },
             child: const Text('Daftar'),
           ),
