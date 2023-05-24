@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_xyz_project/app/home/pages/invoice.screen.dart';
+import 'package:food_xyz_project/app/home/screens/invoice.screen.dart';
 import 'package:food_xyz_project/app/auth/widgets/custom_password_form.widget.dart';
 import 'package:food_xyz_project/app/auth/screens/daftar.screen.dart';
 import 'package:food_xyz_project/app/auth/widgets/custom_text_form.widget.dart';
