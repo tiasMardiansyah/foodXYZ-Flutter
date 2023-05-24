@@ -41,7 +41,7 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         children: [
           Image.asset(
-            'lib/app/assets/images/fast_food.png',
+            'assets/images/fast_food.png',
             width: 125,
           ),
           const Padding(
