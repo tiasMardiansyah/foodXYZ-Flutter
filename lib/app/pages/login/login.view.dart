@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:food_xyz_project/app/home/screens/invoice.screen.dart';
-import 'package:food_xyz_project/app/auth/widgets/custom_password_form.widget.dart';
-import 'package:food_xyz_project/app/auth/screens/daftar.screen.dart';
-import 'package:food_xyz_project/app/auth/widgets/custom_text_form.widget.dart';
+import 'package:food_xyz_project/repositories.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -81,7 +77,7 @@ class _LoginFormState extends State<LoginForm> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const InvoiceScreen(),
+                      builder: (context) => const MainMenuScreen(),
                     ),
                   );
                 }
