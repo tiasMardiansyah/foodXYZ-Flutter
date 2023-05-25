@@ -1,105 +1,85 @@
 import 'package:food_xyz_project/repositories.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class Login extends StatelessWidget {
+  const Login({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(45),
-          child: SingleChildScrollView(
-            child: LoginForm(),
-          ),
-        ),
-      ),
+    return MVVM<LoginViewModel>(
+      view: () => _View(),
+      viewModel: LoginViewModel(),
     );
   }
 }
 
-class LoginForm extends StatefulWidget {
-  const LoginForm({super.key});
-
+class _View extends StatelessView<LoginViewModel> {
   @override
-  State<LoginForm> createState() => _LoginFormState();
-}
-
-class _LoginFormState extends State<LoginForm> {
-  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formkey,
-      child: Column(
-        children: [
-          Image.asset(
-            'assets/images/fast_food.png',
-            width: 125,
+  Widget render(BuildContext context, LoginViewModel viewModel) {
+    return Scaffold(
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(
+            vertical: 45,
+            horizontal: 45,
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-            child: Text(
-              'Login',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10.0),
-            child: CustomTextFormField(
-              displayText: 'Username',
-              errorMessage: 'Username harus diisi',
-              controller: usernameController,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
-            child: CustomPasswordFormField(
-              controller: passwordController,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(50),
-              ),
-              onPressed: () {
-                if (_formkey.currentState!.validate()) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MainMenuScreen(),
+          child: Form(
+            key: viewModel.formkey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/fast_food.png',
+                  width: 125,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
-                  );
-                }
-              },
-              child: const Text('Login'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: CustomTextFormField(
+                    displayText: 'Username',
+                    errorMessage: 'Username harus diisi',
+                    controller: viewModel.usernameController,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: CustomPasswordFormField(
+                    controller: viewModel.passwordController,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(50),
+                    ),
+                    onPressed: viewModel.validate,
+                    child: const Text('Login'),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.cyan,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                  ),
+                  onPressed: viewModel.goToDaftar,
+                  child: const Text('Daftar'),
+                ),
+              ],
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.cyan,
-              foregroundColor: Colors.white,
-              minimumSize: const Size.fromHeight(50),
-            ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const DaftarScreen()));
-            },
-            child: const Text('Daftar'),
-          ),
-        ],
+        ),
       ),
     );
   }

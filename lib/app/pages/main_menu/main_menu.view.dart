@@ -1,37 +1,25 @@
-import 'package:flutter/material.dart';
+import 'package:food_xyz_project/repositories.dart';
 
-class MainMenuScreen extends StatefulWidget {
-  const MainMenuScreen({super.key});
-
-  //contoh untuk kedepan
-  // final String Auth
-
-  @override
-  State<MainMenuScreen> createState() => _MainMenuScreenState();
-}
-
-class _MainMenuScreenState extends State<MainMenuScreen> {
-
-  int _currentIndex = 0;
-  @override
-  void initState() {
-    super.initState();
-
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
+class MainMenu extends StatelessWidget {
+  const MainMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return MVVM<MainMenuViewModel>(
+      view: () => _View(),
+      viewModel: MainMenuViewModel(),
+    );
+  }
+  
+}
+
+class _View extends StatelessView<MainMenuViewModel> {  
+
+  @override
+  Widget render(BuildContext context, MainMenuViewModel viewModel) {
     return Scaffold(
-      appBar: AppBar(
-        
-      ),
+      appBar: viewModel.getCurrentAppBar(),
+      body: viewModel.getCurrentSubPage(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -43,11 +31,15 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             label: 'Profile',
           ),
         ],
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
+        currentIndex: viewModel.currentIndex,
+        onTap: viewModel.navBarChanged,
       ),
     );
   }
 
   
 }
+
+/*  untuk referensi ganti panel
+  [Login(),Login(),][viewModel.currentIndex] 
+*/

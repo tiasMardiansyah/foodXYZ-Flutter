@@ -1,16 +1,101 @@
 import 'package:food_xyz_project/repositories.dart';
 
-class DaftarScreen extends StatelessWidget {
-  const DaftarScreen({super.key});
-
+class Daftar extends StatelessWidget {
+  const Daftar({super.key});
   @override
   Widget build(context) {
-    return const Scaffold(
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(45),
+    return MVVM<DaftarViewModel>(
+      view: () => _View(),
+      viewModel: DaftarViewModel(),
+    );
+  }
+}
+
+class _View extends StatelessView<DaftarViewModel> {
+  @override
+  Widget render(BuildContext context, DaftarViewModel viewModel) {
+    return Scaffold(
+      body: Form(
+        key: viewModel.formKey,
+        child: Center(
           child: SingleChildScrollView(
-            child: FormHandler(),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 45,
+              vertical: 45,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                  child: Text(
+                    'Silahkan Isi data pribadi anda',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: CustomTextFormField(
+                    displayText: 'Nama lengkap',
+                    errorMessage: 'Nama lengkap harus diisi',
+                    controller: viewModel.namaLengkapController,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: CustomTextFormField(
+                    displayText: 'Username',
+                    errorMessage: 'Username harus diisi',
+                    controller: viewModel.usernameController,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: CustomTextFormField(
+                    displayText: 'Alamat',
+                    errorMessage: 'Alamat harus diisi',
+                    controller: viewModel.alamatController,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: CustomPasswordFormField(
+                    controller: viewModel.passwordController,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: CustomPasswordFormField(
+                    displayText: 'Konfirmasi Password anda',
+                    controller: viewModel.passwordConfirmationController,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(50),
+                    ),
+                    onPressed: viewModel.registration,
+                    child: const Text('Daftar'),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.cyan,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                  ),
+                  onPressed: viewModel.goToLogin,
+                  child: const Text('Sudah punya akun'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -18,33 +103,8 @@ class DaftarScreen extends StatelessWidget {
   }
 }
 
-class FormHandler extends StatefulWidget {
-  const FormHandler({super.key});
-
-  @override
-  State<FormHandler> createState() => _FormHandlerState();
-}
-
-class _FormHandlerState extends State<FormHandler> {
-  final GlobalKey<FormState> _daftarFormKey = GlobalKey<FormState>();
-  final namaLengkapController = TextEditingController();
-  final usernameController = TextEditingController();
-  final alamatController = TextEditingController();
-  final passwordController = TextEditingController();
-  final passwordConfirmationController = TextEditingController();
-
-  @override
-  void dispose() {
-    namaLengkapController.dispose();
-    usernameController.dispose();
-    alamatController.dispose();
-    passwordController.dispose();
-    passwordConfirmationController.dispose();
-    super.dispose();
-  }
-
-
-  @override
+/*
+@override
   Widget build(context) {
     return Form(
       key: _daftarFormKey,
@@ -128,4 +188,4 @@ class _FormHandlerState extends State<FormHandler> {
       ),
     );
   }
-}
+*/
