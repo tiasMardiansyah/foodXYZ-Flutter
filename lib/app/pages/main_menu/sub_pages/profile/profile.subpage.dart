@@ -14,10 +14,34 @@ class Profile extends StatelessWidget {
 class _View extends StatelessView<ProfileViewModel> {
   @override
   Widget render(BuildContext context, ProfileViewModel viewModel) {
-    return ElevatedButton.icon(
-      icon: Icon(Icons.logout),
-      onPressed: viewModel.logout, 
-      label: Text('Keluar'),
-      );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        ProfileWidget(
+          name: viewModel.dummyName,
+          address: viewModel.dummyAddress,
+          phoneNumber: viewModel.dummyPhoneNumber,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.red,
+              elevation: 0,
+              alignment: Alignment.centerLeft,
+            ),
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.red,
+            ),
+            onPressed: () => viewModel.logout(),
+            label: const Text('Keluar'),
+          ),
+        ),
+      ],
+    );
   }
 }

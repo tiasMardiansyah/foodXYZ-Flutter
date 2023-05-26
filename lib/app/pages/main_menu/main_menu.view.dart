@@ -14,10 +14,11 @@ class MainMenu extends StatelessWidget {
 }
 
 class _View extends StatelessView<MainMenuViewModel> {  
-
+  
   @override
   Widget render(BuildContext context, MainMenuViewModel viewModel) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 238, 238, 238),
       appBar: viewModel.getCurrentAppBar(),
       body: viewModel.getCurrentSubPage(),
       bottomNavigationBar: BottomNavigationBar(

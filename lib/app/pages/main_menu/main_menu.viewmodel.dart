@@ -4,6 +4,8 @@ class MainMenuViewModel extends ViewModel {
   // ignore: prefer_final_fields
   int _currentIndex = 0;
   int get currentIndex => _currentIndex;
+  final browsePage = const Browse();
+  final profilePage = const Profile();
 
   void navBarChanged(int selectedIndex) {
     _currentIndex = selectedIndex;
@@ -12,16 +14,15 @@ class MainMenuViewModel extends ViewModel {
 
   Widget? getCurrentSubPage() {
     switch (_currentIndex) {
-      
       //menu utama (Browsing)
       case 0: 
-      return const Center(child:Text("this is Main Menu"));
+      return browsePage;
         
 
       //Menu Profile
       case 1:
         {
-          return const Center(child:  Text("This is profile menu"));
+          return profilePage;
         }
     }
     return null;

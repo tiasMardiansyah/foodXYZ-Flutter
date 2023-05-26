@@ -1,9 +1,10 @@
 import 'package:food_xyz_project/repositories.dart';
 void main() {
+
   runApp(
     GetMaterialApp(
       title: 'Aplikasi Food XYZ',
-      routes: routes,
+      getPages: routes,
       initialRoute: Routes.login,
     ),
   );

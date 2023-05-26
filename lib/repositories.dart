@@ -5,4 +5,4 @@ export 'package:get/get.dart';
 
 //depedency from project folder
 export 'package:food_xyz_project/app/index.dart';
-export 'package:food_xyz_project/main.route.dart';
+export 'package:food_xyz_project/config/index.dart';
