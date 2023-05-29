@@ -20,31 +20,33 @@ class _View extends StatelessView<BrowseViewModel> {
         mainAxisSize: MainAxisSize.max,
         children: [
           CustomSearchBar(
-            onSubmitted: viewModel.search,
+            onChanged: viewModel.onKeywordChanged,
             searchController: viewModel.searchController,
             displayText: 'Cari Item',
           ),
           Expanded(
             child: Padding(
-                padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                child: Text(viewModel.display)),
+              padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+              child: CustomListView(data: viewModel.result),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                )),
+              minimumSize: const Size.fromHeight(50),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             onPressed: viewModel.goToInvoice,
-            child: Row(
+            child: const Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text('Bayar'),
                 ),
                 Expanded(
                   child: Text(
-                    viewModel.totalBayar,
+                    'Rp. 000000',
                     textAlign: TextAlign.end,
                   ),
                 )

@@ -4,12 +4,12 @@ class CustomSearchBar extends StatefulWidget {
   const CustomSearchBar({
     super.key,
     this.displayText = 'Cari',
-    required this.onSubmitted,
+    required this.onChanged,
     required this.searchController,
   });
 
   final TextEditingController searchController;
-  final void Function(String)? onSubmitted;
+  final void Function(String)? onChanged;
   final String displayText;
 
   @override
@@ -21,8 +21,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   Widget build(BuildContext context) {
     return TextField(
       decoration: searchBarDecoration(),
-      onSubmitted: widget.onSubmitted,
-      onChanged: widget.onSubmitted,
+      onChanged: widget.onChanged,
       controller: widget.searchController,
     );
   }
