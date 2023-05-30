@@ -20,14 +20,158 @@ class _View extends StatelessView<BrowseViewModel> {
         mainAxisSize: MainAxisSize.max,
         children: [
           CustomSearchBar(
-            onChanged: viewModel.onKeywordChanged,
+            onChanged: viewModel.onSearchKeywordChanged,
             searchController: viewModel.searchController,
             displayText: 'Cari Item',
           ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-              child: CustomListView(data: viewModel.result),
+              child: ListView.builder(
+                itemCount: viewModel.filteredData.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    elevation: 5,
+                    child: Row(
+                      children: [
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              child: Image.asset(
+                                'assets/images/fast_food.png',
+                                width: 100,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        viewModel
+                                            .filteredData[index].namaBarang,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.yellow,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      viewModel.filteredData[index].rating
+                                          .toString(),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 5.0,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        viewModel.convertToRupiah(viewModel
+                                            .filteredData[index].hargaBarang),
+                                      ),
+                                    ),
+                                    Text(viewModel.getItemQty(viewModel
+                                        .filteredData[index].idBarang)),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            viewModel.onJumlahBarangDikurang(
+                                              viewModel
+                                                  .filteredData[index].idBarang,
+                                              viewModel.controllers[index],
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.remove_circle,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Expanded(
+                                          child: TextField(
+                                            controller:
+                                                viewModel.controllers[index],
+                                            keyboardType: TextInputType.number,
+                                            onChanged: ((value) => viewModel
+                                                    .onTotalItemKeywordChanged(
+                                                  value,
+                                                  viewModel.controllers[index],
+                                                )),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        IconButton(
+                                          onPressed: () {
+                                            viewModel.onTambahJumlahBarang(
+                                              viewModel.controllers[index],
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.add_circle,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0,
+                                    ),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        viewModel.addToCart(
+                                          viewModel
+                                              .filteredData[index].idBarang,
+                                          viewModel.controllers[index],
+                                        );
+                                      },
+                                      child: const Icon(Icons.shopping_cart),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           ElevatedButton(
@@ -39,14 +183,14 @@ class _View extends StatelessView<BrowseViewModel> {
               ),
             ),
             onPressed: viewModel.goToInvoice,
-            child: const Row(
+            child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Text('Bayar'),
                 ),
                 Expanded(
                   child: Text(
-                    'Rp. 000000',
+                    viewModel.convertToRupiah(viewModel.total),
                     textAlign: TextAlign.end,
                   ),
                 )

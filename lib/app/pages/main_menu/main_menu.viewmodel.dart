@@ -4,8 +4,11 @@ class MainMenuViewModel extends ViewModel {
   // ignore: prefer_final_fields
   int _currentIndex = 0;
   int get currentIndex => _currentIndex;
-  final browsePage = const Browse();
-  final profilePage = const Profile();
+
+  static const List<Widget> _pages = <Widget> [
+    Browse(),
+    Profile()
+  ];
 
   void navBarChanged(int selectedIndex) {
     _currentIndex = selectedIndex;
@@ -13,24 +16,14 @@ class MainMenuViewModel extends ViewModel {
   }
 
   Widget? getCurrentSubPage() {
-    switch (_currentIndex) {
-      //menu utama (Browsing)
-      case 0: 
-      return browsePage;
-        
-
-      //Menu Profile
-      case 1:
-        {
-          return profilePage;
-        }
-    }
-    return null;
+    return IndexedStack(
+      index: _currentIndex,
+      children: _pages,
+    );
   }
 
   PreferredSizeWidget? getCurrentAppBar() {
     switch (_currentIndex) {
-
       //menu utama (Browsing)
       case 0:
         {
@@ -65,12 +58,4 @@ class MainMenuViewModel extends ViewModel {
 
     return null;
   }
-
-  /*
- String get userName => _userName;
-  set userName(String value){
-    _userName = value;
-    notifyListeners();
-  }
-*/
 }
