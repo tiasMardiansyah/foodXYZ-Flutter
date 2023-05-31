@@ -17,7 +17,7 @@ class _View extends StatelessView<InvoiceViewModel> {
   @override
   Widget render(BuildContext context, InvoiceViewModel viewModel) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 223, 223, 223),
+      backgroundColor: Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -39,15 +39,68 @@ class _View extends StatelessView<InvoiceViewModel> {
       body: Column(
         children: [
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal:15.0, vertical: 15.0),
-              child: Container(
-                color: Colors.red,
-              ),
+            child: ListView(
+              children: [
+                DataTable(
+                    headingTextStyle: headerStyle(),
+                    dataTextStyle: cellStyle(),
+                    showBottomBorder: true,
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text(
+                          'Nama',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Harga',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'QTY',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'SubTotal',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                    rows: viewModel.createDummyData(20)),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 25,
+              vertical: 20,
+            ),
+            color: Colors.white,
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Total Pembayaran',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Rp. XXX.XXX',
+                  style: TextStyle(fontSize: 18),
+                )
+              ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 15),
             child: Column(
               children: [
                 Row(
@@ -74,7 +127,7 @@ class _View extends StatelessView<InvoiceViewModel> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top:8.0),
+                  padding: const EdgeInsets.only(top: 8.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
@@ -89,5 +142,18 @@ class _View extends StatelessView<InvoiceViewModel> {
         ],
       ),
     );
+  }
+
+  TextStyle headerStyle() {
+    return const TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+      fontSize: 16,
+      
+    );
+  }
+
+  TextStyle cellStyle() {
+    return const TextStyle(fontSize: 11, color: Colors.black);
   }
 }

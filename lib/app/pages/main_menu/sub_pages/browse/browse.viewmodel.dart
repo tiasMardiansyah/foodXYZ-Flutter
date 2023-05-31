@@ -70,7 +70,7 @@ class BrowseViewModel extends ViewModel {
     if (itemToUpdate != null) {
       if (qty <= 0 && (-qty) >= itemToUpdate.qty) {
         return;
-      } 
+      }
 
       qty--;
       controller.text = qty.toString();
@@ -126,17 +126,19 @@ class BrowseViewModel extends ViewModel {
   }
 
   void addToCart(String itemId, TextEditingController controller) {
-    Barang? barangDiUpdate =
-        masterData.firstWhereOrNull((element) => element.idBarang == itemId);
+    if (controller.text != '0') {
+      Barang? barangDiUpdate =
+          masterData.firstWhereOrNull((element) => element.idBarang == itemId);
 
-    if (barangDiUpdate != null) {
-      //update quantitas barang di masterData
-      barangDiUpdate.qty += int.parse(controller.text);
+      if (barangDiUpdate != null) {
+        //update quantitas barang di masterData
+        barangDiUpdate.qty += int.parse(controller.text);
 
-      //lakukan penghitungan keseluruhan
-      countTotal();
-      controller.text = '0';
-      Get.snackbar('Notifikasi keranjang', 'barang Berhasil Di masukkan');
+        //lakukan penghitungan keseluruhan
+        countTotal();
+        controller.text = '0';
+        Get.snackbar('Notifikasi keranjang', 'barang Berhasil Di masukkan');
+      }
     }
   }
 
@@ -156,5 +158,15 @@ class BrowseViewModel extends ViewModel {
     return '';
   }
 
-  void goToInvoice() => Get.toNamed(Routes.invoice);
+  void goToInvoice() {
+    if (_total > 0) {
+      Get.toNamed(Routes.invoice);
+    } else {
+      Get.snackbar(
+        "Tidak Bisa Ke Invoice",
+        'Total transaksi masih kosong, coba tambah barang',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
 }
