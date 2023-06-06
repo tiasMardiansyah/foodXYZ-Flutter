@@ -17,7 +17,7 @@ class _View extends StatelessView<InvoiceViewModel> {
   @override
   Widget render(BuildContext context, InvoiceViewModel viewModel) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 245, 245, 245),
+      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -82,7 +82,7 @@ class _View extends StatelessView<InvoiceViewModel> {
             ),
             color: Colors.white,
             width: double.infinity,
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(

@@ -57,7 +57,7 @@ class _View extends StatelessView<BrowseViewModel> {
                                     Expanded(
                                       child: Text(
                                         viewModel
-                                            .filteredData[index].namaBarang,
+                                            .filteredData[index].namaProduk,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
@@ -91,11 +91,11 @@ class _View extends StatelessView<BrowseViewModel> {
                                     Expanded(
                                       child: Text(
                                         viewModel.convertToRupiah(viewModel
-                                            .filteredData[index].hargaBarang),
+                                            .filteredData[index].hargaProduk),
                                       ),
                                     ),
                                     Text(viewModel.getItemQty(viewModel
-                                        .filteredData[index].idBarang)),
+                                        .filteredData[index].idProduk)),
                                   ],
                                 ),
                               ),
@@ -106,9 +106,8 @@ class _View extends StatelessView<BrowseViewModel> {
                                       children: [
                                         IconButton(
                                           onPressed: () {
-                                            viewModel.onJumlahBarangDikurang(
-                                              viewModel
-                                                  .filteredData[index].idBarang,
+                                            viewModel.onJumlahProdukDikurang(
+                                              viewModel.filteredData[index].idProduk,
                                               viewModel.controllers[index],
                                             );
                                           },
@@ -125,17 +124,13 @@ class _View extends StatelessView<BrowseViewModel> {
                                             controller:
                                                 viewModel.controllers[index],
                                             keyboardType: TextInputType.number,
-                                            onChanged: ((value) => viewModel
-                                                    .onTotalItemKeywordChanged(
-                                                  value,
-                                                  viewModel.controllers[index],
-                                                )),
+                                            style: const TextStyle(),
                                           ),
                                         ),
                                         const SizedBox(width: 5),
                                         IconButton(
                                           onPressed: () {
-                                            viewModel.onTambahJumlahBarang(
+                                            viewModel.onTambahJumlahProduk(
                                               viewModel.controllers[index],
                                             );
                                           },
@@ -155,7 +150,7 @@ class _View extends StatelessView<BrowseViewModel> {
                                       onPressed: () {
                                         viewModel.addToCart(
                                           viewModel
-                                              .filteredData[index].idBarang,
+                                              .filteredData[index].idProduk,
                                           viewModel.controllers[index],
                                         );
                                       },

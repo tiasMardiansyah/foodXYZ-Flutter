@@ -3,33 +3,26 @@ import 'package:food_xyz_project/repositories.dart';
 class BrowseViewModel extends ViewModel {
   final searchController = TextEditingController();
 
-  List<Barang> masterData = [
-    Barang('BR-1', 'Teh Jus', 20000, 4.5, 0),
-    Barang('BR-2', 'Baso', 30000, 3.5, 0),
-    Barang('BR-3', 'Nasi Goreng', 35000, 4.0, 0),
-    Barang('BR-4', 'Ice Cream', 10000, 4.5, 0),
-    Barang('BR-5', 'Daging Ayam', 20000, 4.2, 0),
-    Barang('BR-6', 'Daging Sapi', 45000, 5.0, 0),
-    Barang('BR-7', 'Daging Domba', 60000, 5.0, 0),
-    Barang('BR-8', 'Susus Sapi', 15000, 5.0, 0),
-    Barang('BR-9', 'Susu Kambing', 10000, 3.0, 0),
-    Barang('BR-10', 'Susu Domba', 12500, 3.2, 0),
-  ];
+  List<ProdukModel> masterData = DummyMasterData().dummyData;
 
-  //untuk menampilkan data, untuk update akan langsung ke masterData
-  List<Barang> _filteredData = [];
-  List<Barang> get filteredData => _filteredData;
   List<TextEditingController> controllers = [];
 
-  set filteredData(List<Barang> value) {
+  //untuk menampilkan data, untuk update akan langsung ke masterData
+  List<ProdukModel> _filteredData = [];
+  List<ProdukModel> get filteredData => _filteredData;
+  set filteredData(List<ProdukModel> value) {
     _filteredData = value;
     controllers = List.generate(
-        filteredData.length,
-        (index) => TextEditingController(
-              text: filteredData[index].qty.toString(),
-            ));
+      filteredData.length,
+      (index) => TextEditingController(
+        text: '0',
+      ),
+    );
     notifyListeners();
   }
+
+  List<Cart> _cart = [];
+  List<Cart> get cart => _cart;
 
   int _total = 0;
   int get total => _total;
@@ -56,31 +49,37 @@ class BrowseViewModel extends ViewModel {
     countTotal();
   }
 
-  void onTambahJumlahBarang(TextEditingController controller) {
+  void onTambahJumlahProduk(TextEditingController controller) {
     int qty = int.parse(controller.text);
     qty++;
     controller.text = qty.toString();
   }
 
-  void onJumlahBarangDikurang(String itemId, TextEditingController controller) {
+  void onJumlahProdukDikurang(String itemId, TextEditingController controller) {
     int qty = int.parse(controller.text);
-    Barang? itemToUpdate =
-        masterData.firstWhereOrNull((element) => element.idBarang == itemId);
+    Cart? itemToUpdate =
+        cart.firstWhereOrNull((element) => element.produk.idProduk == itemId);
 
     if (itemToUpdate != null) {
       if (qty <= 0 && (-qty) >= itemToUpdate.qty) {
-        return;
+        return; //kembali apabila qty di list menu melebihi jumlah qty di keranjang
       }
-
-      qty--;
-      controller.text = qty.toString();
+    } else if (qty <= 0) {
+      return; // kemabli apabila qty di list menu 0
     }
+
+    qty--;
+    controller.text = qty.toString();
+  }
+
+  void getProdukName(int) {
+
   }
 
   void countTotal() {
     int total = 0;
-    masterData.forEach((element) {
-      total += element.hargaBarang * element.qty;
+    cart.forEach((element) {
+      total += element.produk.hargaProduk * element.qty;
     });
     this.total = total;
   }
@@ -113,9 +112,9 @@ class BrowseViewModel extends ViewModel {
       const Duration(milliseconds: 500),
       () {
         String searchValue = value.toLowerCase();
-        List<Barang> temp = [];
+        List<ProdukModel> temp = [];
         for (var element in masterData) {
-          if (element.namaBarang.toLowerCase().contains(searchValue)) {
+          if (element.namaProduk.toLowerCase().contains(searchValue)) {
             temp.add(element);
           }
         }
@@ -127,17 +126,27 @@ class BrowseViewModel extends ViewModel {
 
   void addToCart(String itemId, TextEditingController controller) {
     if (controller.text != '0') {
-      Barang? barangDiUpdate =
-          masterData.firstWhereOrNull((element) => element.idBarang == itemId);
+      ProdukModel? itemToAdded =
+          masterData.firstWhereOrNull((element) => element.idProduk == itemId);
 
-      if (barangDiUpdate != null) {
-        //update quantitas barang di masterData
-        barangDiUpdate.qty += int.parse(controller.text);
+      Cart? currentItemOnCart =
+          cart.firstWhereOrNull((element) => element.produk == itemToAdded);
+
+      if (itemToAdded != null) {
+        if (currentItemOnCart != null) {
+          currentItemOnCart.qty += int.parse(controller.text);
+
+          if (currentItemOnCart.qty == 0) {
+            cart.remove(currentItemOnCart);
+          }
+        } else {
+          cart.add(Cart(itemToAdded, int.parse(controller.text)));
+        }
 
         //lakukan penghitungan keseluruhan
         countTotal();
         controller.text = '0';
-        Get.snackbar('Notifikasi keranjang', 'barang Berhasil Di masukkan');
+        Get.snackbar('Notifikasi keranjang', 'Produk Berhasil Di masukkan');
       }
     }
   }
@@ -148,11 +157,11 @@ class BrowseViewModel extends ViewModel {
   }
 
   String getItemQty(String itemId) {
-    Barang? searchedItem =
-        masterData.firstWhereOrNull((element) => element.idBarang == itemId);
+    Cart? currentItemOnCart =
+        cart.firstWhereOrNull((element) => element.produk.idProduk == itemId);
 
-    if (searchedItem != null && searchedItem.qty > 0) {
-      String quantity = searchedItem.qty.toString();
+    if (currentItemOnCart != null && currentItemOnCart.qty > 0) {
+      String quantity = currentItemOnCart.qty.toString();
       return 'Dikeranjang : $quantity';
     }
     return '';
@@ -164,7 +173,7 @@ class BrowseViewModel extends ViewModel {
     } else {
       Get.snackbar(
         "Tidak Bisa Ke Invoice",
-        'Total transaksi masih kosong, coba tambah barang',
+        'Total transaksi masih kosong, coba tambah Produk',
         snackPosition: SnackPosition.BOTTOM,
       );
     }

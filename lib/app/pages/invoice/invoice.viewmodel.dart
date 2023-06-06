@@ -8,7 +8,7 @@ class InvoiceViewModel extends ViewModel {
 
     for (int n = 0; n < total; n++) {
       dummyData.add(
-        DataRow(
+        const DataRow(
           cells: <DataCell>[
             DataCell(Text("Test 1", softWrap: true,)),
             DataCell(Text("Test 2")),

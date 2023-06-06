@@ -4,10 +4,12 @@ class CustomPasswordFormField extends StatefulWidget {
   const CustomPasswordFormField({
     super.key,
     this.controller,
+    this.passwordToCheck,
     this.displayText = 'Password',
     this.errorMessage = 'Password harus diisi',
   });
 
+  final CustomPasswordFormField? passwordToCheck;
   final String? errorMessage;
   final String? displayText;
   final TextEditingController? controller;
@@ -28,6 +30,11 @@ class _CustomPasswordFormFieldState extends State<CustomPasswordFormField> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return widget.errorMessage;
+        }
+
+        if (widget.passwordToCheck != null &&
+            widget.passwordToCheck!.controller?.text != value) {
+          return 'Password Tidak Sama!!';
         }
         return null;
       },
