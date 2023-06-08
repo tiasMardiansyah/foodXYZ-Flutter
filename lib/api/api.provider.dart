@@ -2,25 +2,19 @@ import 'dart:convert';
 import 'package:food_xyz_project/repositories.dart';
 
 class ApiProvider extends GetConnect {
+  final tokenStorage = const FlutterSecureStorage();
+  static const authUsername = ApiConfig.username;
+      static const authPassword = ApiConfig.password;
+
+
   @override
   void onInit() {
     httpClient.baseUrl = ApiConfig.baseUrl;
     httpClient.defaultContentType = 'application/x-www-form-urlencoded';
-    httpClient.addRequestModifier<dynamic>((request) {
-      const username = ApiConfig.username;
-      const password = ApiConfig.password;
 
-      final token =
-          'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-      request.headers['Authorization'] = token;
-
-      return request;
-    });
   }
 
-
-
-  Future<String> addAccount({
+  Future<Map<String, dynamic>> addAccount({
     required String namaLengkap,
     required String username,
     required String alamat,
@@ -51,13 +45,23 @@ class ApiProvider extends GetConnect {
       );
 
       if (response.hasError) {
-        return Future.error(response.statusText ??
-            'Terjadi kesalahan dalam proses pendaftaran');
+        var error = {
+          'statusCode': response.statusCode ?? '500',
+          'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
+          'messages': response.body['messages'],
+        };
+
+        throw error;
       }
 
-      return 'Akun Berhasil Dibuat';
+      var result = {
+        'statusCode': response.statusCode,
+        'statusText': response.statusText,
+      };
+
+      return Future.value(result);
     } catch (e) {
-      return Future.error(e.toString());
+      return Future.error(e);
     }
   }
 
@@ -81,20 +85,87 @@ class ApiProvider extends GetConnect {
         ApiEndPoint.login,
         'POST',
         body: body,
+        headers: {
+          'Authorization' : 'Basic ${base64.encode(utf8.encode('$authUsername:$authPassword'))}'
+        }
       );
 
       if (response.hasError) {
-        return Future.error(
-            response.statusText ?? 'Terjadi Kesalahan saat login');
+        var error = {
+          'statusCode': response.statusCode ?? '500',
+          'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
+        };
+        throw error;
       } else {
         var result = {
+          'statusCode': response.statusCode,
+          'statusText': response.statusText,
           'accessToken': response.body['access_token'],
           'refreshToken': response.body['refresh_token'],
         };
         return Future.value(result);
       }
     } catch (e) {
-      return Future.error('Error: $e');
+      return Future.error(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> getProfile(String token) async {
+    try {
+      final response = await request(
+        ApiEndPoint.profile,
+        'GET',
+        headers: {
+          'authorization' : 'Bearer $token'
+        }
+      );
+
+      if (response.hasError) {
+        var error = {
+          'statusCode': response.statusCode,
+          'statusText': response.statusText,
+          'error': response.body['error_description'],
+        };
+
+        throw error;
+      } 
+      return Future.value(response.body);
+
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  Future<void> getProduk(String token) async {
+    try {
+      final response = await request(
+        ApiEndPoint.produk,
+        'GET',
+        headers: {
+          'authorization': 'bearer $token',
+        },
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          {}
+          break;
+
+        case 401:
+          {
+            if (response.body['error'] == "invalid_token") {}
+          }
+      }
+
+      if (response.statusCode == 200) {
+        //final jsonList = response.body as List<dynamic>;
+        //return jsonList.map((json) => ProdukModel.fromJson(json).toList);
+      } else {
+        return Future.error(
+            response.statusText ?? 'Terjadi kesalahan saat mengambil produk');
+      }
+    } catch (e) {
+      return Future.error(e);
     }
   }
 }

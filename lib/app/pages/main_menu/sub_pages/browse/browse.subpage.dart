@@ -39,9 +39,15 @@ class _View extends StatelessView<BrowseViewModel> {
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 10),
-                              child: Image.asset(
-                                'assets/images/fast_food.png',
+                              child: Container(
                                 width: 100,
+                                height : 100,
+                                child: FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: Image.asset(
+                                    'assets/images/fast_food.png',
+                                  ),
+                                ),
                               ),
                             ),
                           ],

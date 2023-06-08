@@ -88,9 +88,9 @@ class _View extends StatelessView<DaftarViewModel> {
               ),
             ),
           ),
-          if (viewModel.isLoading)
+          if (viewModel.isBusy)
             Container(
-              color: Colors.black.withOpacity(0.5),
+              color: const Color.fromARGB(54, 0, 0, 0),
               child: const Center(
                 child: CircularProgressIndicator(),
               ),

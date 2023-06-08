@@ -36,12 +36,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   pmvvm: ^4.0.1
   get: ^4.6.5
-  shared_preferences: ^2.1.1
+  cached_network_image: ^3.2.0
   async: ^2.11.0
   intl: ^0.18.1
   collection: ^1.17.1
-  http: ^1.0.0
   convert: ^3.1.1
+  flutter_secure_storage: ^8.0.0
+  internet_connection_checker: ^1.0.0+1
   
 dev_dependencies:
   flutter_test:
@@ -67,7 +68,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/fast_food.png
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

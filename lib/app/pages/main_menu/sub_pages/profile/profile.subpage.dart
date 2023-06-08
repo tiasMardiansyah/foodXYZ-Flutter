@@ -19,9 +19,9 @@ class _View extends StatelessView<ProfileViewModel> {
       mainAxisSize: MainAxisSize.max,
       children: [
         ProfileWidget(
-          name: viewModel.dummyName,
-          address: viewModel.dummyAddress,
-          phoneNumber: viewModel.dummyPhoneNumber,
+          name: viewModel.getName(),
+          address: viewModel.getAddress(),
+          phoneNumber: viewModel.getPhone(),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

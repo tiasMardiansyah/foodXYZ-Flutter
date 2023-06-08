@@ -3,13 +3,13 @@ import 'package:food_xyz_project/repositories.dart';
 void main() async {
   
   WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
-  
+  const tokenStorage = FlutterSecureStorage(); 
+
   runApp(
     GetMaterialApp(
       title: 'Aplikasi Food XYZ',
       getPages: routes,
-      initialRoute: prefs.getString('loginCredentials') == null
+      initialRoute: await tokenStorage.read(key: 'accessToken') == null
           ? Routes.login
           : Routes.mainMenu,
       initialBinding: MainBinding(),

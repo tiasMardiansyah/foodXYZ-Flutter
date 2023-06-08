@@ -72,15 +72,11 @@ class BrowseViewModel extends ViewModel {
     controller.text = qty.toString();
   }
 
-  void getProdukName(int) {
-
-  }
-
   void countTotal() {
     int total = 0;
-    cart.forEach((element) {
+    for (var element in cart) {
       total += element.produk.hargaProduk * element.qty;
-    });
+    }
     this.total = total;
   }
 

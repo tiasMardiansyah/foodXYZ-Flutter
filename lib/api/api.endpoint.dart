@@ -6,5 +6,6 @@ class ApiEndPoint {
 
   static const String login = '/user/login';
   static const String daftar = '/user/register';
+  static const String profile = '/user/profile';
   static const String produk = '/products';
 }
