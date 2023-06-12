@@ -29,6 +29,24 @@ class _View extends StatelessView<ProfileViewModel> {
             style: ElevatedButton.styleFrom(
               minimumSize: const Size.fromHeight(50),
               backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              elevation: 0,
+              alignment: Alignment.centerLeft,
+            ),
+            icon: const Icon(
+              Icons.history,
+              color: Colors.black,
+            ),
+            onPressed: () => viewModel.goToLogTransaksi(),
+            label: const Text('Lihat Riwayat Transaksi'),
+          ),
+        ),
+         Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              backgroundColor: Colors.white,
               foregroundColor: Colors.red,
               elevation: 0,
               alignment: Alignment.centerLeft,

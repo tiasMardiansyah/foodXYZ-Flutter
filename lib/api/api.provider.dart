@@ -4,14 +4,12 @@ import 'package:food_xyz_project/repositories.dart';
 class ApiProvider extends GetConnect {
   final tokenStorage = const FlutterSecureStorage();
   static const authUsername = ApiConfig.username;
-      static const authPassword = ApiConfig.password;
-
+  static const authPassword = ApiConfig.password;
 
   @override
   void onInit() {
     httpClient.baseUrl = ApiConfig.baseUrl;
     httpClient.defaultContentType = 'application/x-www-form-urlencoded';
-
   }
 
   Future<Map<String, dynamic>> addAccount({
@@ -86,8 +84,10 @@ class ApiProvider extends GetConnect {
         'POST',
         body: body,
         headers: {
-          'Authorization' : 'Basic ${base64.encode(utf8.encode('$authUsername:$authPassword'))}'
-        }
+          'Authorization': 'Basic ${base64.encode(
+            utf8.encode('$authUsername:$authPassword'),
+          )}',
+        },
       );
 
       if (response.hasError) {
@@ -115,55 +115,100 @@ class ApiProvider extends GetConnect {
       final response = await request(
         ApiEndPoint.profile,
         'GET',
-        headers: {
-          'authorization' : 'Bearer $token'
-        }
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       if (response.hasError) {
         var error = {
-          'statusCode': response.statusCode,
-          'statusText': response.statusText,
+          'statusCode': response.statusCode ?? '500',
+          'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
           'error': response.body['error_description'],
         };
 
         throw error;
-      } 
+      }
       return Future.value(response.body);
-
     } catch (e) {
       return Future.error(e);
     }
   }
 
-  Future<void> getProduk(String token) async {
+  Future<dynamic> getProduk(String token) async {
     try {
       final response = await request(
         ApiEndPoint.produk,
         'GET',
         headers: {
-          'authorization': 'bearer $token',
+          'Authorization': 'bearer $token',
         },
       );
 
-      switch (response.statusCode) {
-        case 200:
-          {}
-          break;
+      if (response.hasError) {
+        var error = {
+          'statusCode': response.statusCode ?? '500',
+          'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
+        };
 
-        case 401:
-          {
-            if (response.body['error'] == "invalid_token") {}
-          }
+        throw error;
       }
+      return Future.value(response.body);
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
 
-      if (response.statusCode == 200) {
-        //final jsonList = response.body as List<dynamic>;
-        //return jsonList.map((json) => ProdukModel.fromJson(json).toList);
-      } else {
-        return Future.error(
-            response.statusText ?? 'Terjadi kesalahan saat mengambil produk');
+  Future<dynamic> getLogTransaksi(String token) async {
+    try {
+      final response = await request(ApiEndPoint.logTransaksi, 'Get',
+          headers: {'Authorization': 'bearer $token'});
+
+      if (response.hasError) {
+        var error = {
+          'statusCode': response.statusCode ?? '500',
+          'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
+        };
+        throw error;
       }
+      return Future.value(response.body);
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> createLogTransaksi(
+      List<CartModel> cart, int totalBayar, String token) async {
+    try {
+      //ubah menjadi json
+      final jsonString = jsonEncode(cart);
+
+      final data = {
+          "invoice-detail" : jsonString,
+          "total-bayar" : totalBayar.toString(),    
+      };
+
+      final encodedData = data.entries.map(
+        (e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+      );
+      final body = encodedData.join('&');
+
+
+      final response = await request(
+        ApiEndPoint.logTransaksi,
+        "POST",
+        body : body,
+        headers: {'Authorization': 'bearer $token'},
+      );
+
+      
+
+      if (response.hasError) {
+        var error = {
+          'statusCode': response.statusCode ?? '500',
+          'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
+        };
+        throw error;
+      }
+      return Future.value(response.body);
     } catch (e) {
       return Future.error(e);
     }

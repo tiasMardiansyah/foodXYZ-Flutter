@@ -38,7 +38,9 @@ class ProfileViewModel extends ViewModel {
         };
         throw error;
       }
-      userProfile = UserModel.fromJson(await apiCall.getProfile(token!));
+
+      
+      userProfile = UserModel.fromJson(await apiCall.getProfile(token));
       notifyListeners();
     } catch (e) {
       if (e is Map<String, dynamic>) {
@@ -69,11 +71,14 @@ class ProfileViewModel extends ViewModel {
     }
   }
 
-  void logout() async {
+  Future<void> logout() async {
     bool userConfirmed = await showConfirmDialog(texts: ['Yakin ingin Logout']);
     if (userConfirmed) {
-      await tokenStorage.deleteAll();
+      await tokenStorage.delete(key:'accessToken');
+      await tokenStorage.delete(key: 'refreshToken');
       Get.offNamed(Routes.login);
     }
   }
+
+  void goToLogTransaksi() => Get.toNamed(Routes.logTransaksi);
 }

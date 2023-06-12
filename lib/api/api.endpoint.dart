@@ -8,4 +8,5 @@ class ApiEndPoint {
   static const String daftar = '/user/register';
   static const String profile = '/user/profile';
   static const String produk = '/products';
+  static const String logTransaksi = '/invoices';
 }

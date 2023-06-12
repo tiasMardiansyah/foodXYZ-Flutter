@@ -67,5 +67,5 @@ class LoginViewModel extends ViewModel {
     }
   }
 
-  void goToDaftar() => Get.toNamed(Routes.daftar);
+  void goToDaftar() => Get.toNamed(Routes.daftar, );
 }

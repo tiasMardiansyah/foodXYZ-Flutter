@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   pmvvm: ^4.0.1
   get: ^4.6.5
-  cached_network_image: ^3.2.0
+  cached_network_image: ^3.2.3
   async: ^2.11.0
   intl: ^0.18.1
   collection: ^1.17.1

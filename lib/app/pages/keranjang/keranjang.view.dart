@@ -71,7 +71,7 @@ class _View extends StatelessView<InvoiceViewModel> {
                         ),
                       ),
                     ],
-                    rows: viewModel.createDummyData(20)),
+                    rows: viewModel.setRow()),
               ],
             ),
           ),
@@ -82,10 +82,10 @@ class _View extends StatelessView<InvoiceViewModel> {
             ),
             color: Colors.white,
             width: double.infinity,
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Total Pembayaran',
                   style: TextStyle(
                     fontSize: 18,
@@ -93,8 +93,8 @@ class _View extends StatelessView<InvoiceViewModel> {
                   ),
                 ),
                 Text(
-                  'Rp. XXX.XXX',
-                  style: TextStyle(fontSize: 18),
+                  viewModel.getTotalBayarInRupiah(),
+                  style: const TextStyle(fontSize: 18),
                 )
               ],
             ),
@@ -149,7 +149,6 @@ class _View extends StatelessView<InvoiceViewModel> {
       fontWeight: FontWeight.bold,
       color: Colors.black,
       fontSize: 16,
-      
     );
   }
 

@@ -73,7 +73,6 @@ Future<bool> showConfirmDialog({
     },
     textCancel: textCancel,
     onCancel: () {
-      Get.back();
       completer.complete(false);
     },
     barrierDismissible: false,

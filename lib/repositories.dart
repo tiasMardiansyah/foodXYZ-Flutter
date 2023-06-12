@@ -7,6 +7,7 @@ export 'dart:async';
 export 'package:intl/intl.dart' hide TextDirection;
 export 'package:collection/collection.dart';
 export 'package:internet_connection_checker/internet_connection_checker.dart';
+export 'package:cached_network_image/cached_network_image.dart';
 
 //depedency from project folder
 export 'package:food_xyz_project/app/index.dart';

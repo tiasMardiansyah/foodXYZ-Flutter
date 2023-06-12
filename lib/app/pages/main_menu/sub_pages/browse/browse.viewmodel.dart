@@ -3,11 +3,16 @@ import 'package:food_xyz_project/repositories.dart';
 class BrowseViewModel extends ViewModel {
   final searchController = TextEditingController();
 
-  List<ProdukModel> masterData = DummyMasterData().dummyData;
+  //seluruh produk akan disimpan di variabel dibawah
+  List<ProdukModel> masterData = [];
 
+  final tokenStorage = const FlutterSecureStorage();
+  late ApiProvider apiCall;
+
+  //controller disini dibuat agar setiap jumlah item dipilih di ListView bisa diubah
   List<TextEditingController> controllers = [];
 
-  //untuk menampilkan data, untuk update akan langsung ke masterData
+  //ketimbang mengambil produk langsung dari master data, variabel ini dibuat untuk mengambil produk yang sesuai dengan pencarian
   List<ProdukModel> _filteredData = [];
   List<ProdukModel> get filteredData => _filteredData;
   set filteredData(List<ProdukModel> value) {
@@ -21,13 +26,22 @@ class BrowseViewModel extends ViewModel {
     notifyListeners();
   }
 
-  List<Cart> _cart = [];
-  List<Cart> get cart => _cart;
+  List<CartModel> _cart = [];
+  List<CartModel> get cart => _cart;
 
+  //total harga keseluruhan produk yang dipilih
   int _total = 0;
   int get total => _total;
   set total(int value) {
     _total = value;
+    notifyListeners();
+  }
+
+  //flag untuk mengecek apakah aplikasi sedang sibuk, biasanya untuk mengambil data dan lain nya
+  bool _isBusy = false;
+  bool get isBusy => _isBusy;
+  set isBusy(bool value) {
+    _isBusy = value;
     notifyListeners();
   }
 
@@ -43,10 +57,66 @@ class BrowseViewModel extends ViewModel {
   }
 
   @override
-  void init() {
+  void init() async {
+    //ambil data dari luar terlebih dahulu
+    apiCall = Get.find<ApiProvider>();
+    await getMasterData();
+
     //tampilkan seluruh menu pada awal tampilan menu browsing
     filteredData = masterData;
     countTotal();
+  }
+
+  Future<void> getMasterData() async {
+    try {
+      final token = await tokenStorage.read(key: 'accessToken');
+      if (token == null) {
+        final error = {
+          'statusCode': 404,
+          'statusText': 'Token tidak ditemukan'
+        };
+        throw error;
+      }
+
+      final result = await apiCall.getProduk(token);
+      for (var n = 0; n < result.length; n++) {
+        masterData.add(ProdukModel.fromJson(result[n]));
+      }
+    } catch (e) {
+      if (e is Map<String, dynamic>) {
+        switch (e['statusCode']) {
+          case 401:
+            {
+              await showWarningDialog(
+                title: 'Token sudah kadaluarsa',
+                icon: Image.asset('assets/images/not_found.png'),
+                texts: ['Harap login kembali'],
+              );
+              Get.offNamed(Routes.login);
+            }
+            break;
+
+          case 404:
+            {
+              await showWarningDialog(
+                title: 'Kredensial akun tidak ditemukan',
+                icon: Image.asset('assets/images/not_found.png'),
+                texts: ['Harap login kembali'],
+              );
+              Get.offNamed(Routes.login);
+            }
+            break;
+
+          //dan error lain nya
+        }
+      } else {
+        showWarningDialog(
+          title: 'Error Besar',
+          icon: Image.asset('assets/images/warning_sign.png'),
+          texts: ['Hubungi developer apabila anda melihat pesan ini'],
+        );
+      }
+    }
   }
 
   void onTambahJumlahProduk(TextEditingController controller) {
@@ -57,7 +127,7 @@ class BrowseViewModel extends ViewModel {
 
   void onJumlahProdukDikurang(String itemId, TextEditingController controller) {
     int qty = int.parse(controller.text);
-    Cart? itemToUpdate =
+    CartModel? itemToUpdate =
         cart.firstWhereOrNull((element) => element.produk.idProduk == itemId);
 
     if (itemToUpdate != null) {
@@ -125,35 +195,34 @@ class BrowseViewModel extends ViewModel {
       ProdukModel? itemToAdded =
           masterData.firstWhereOrNull((element) => element.idProduk == itemId);
 
-      Cart? currentItemOnCart =
+      CartModel? currentItemOnCart =
           cart.firstWhereOrNull((element) => element.produk == itemToAdded);
 
       if (itemToAdded != null) {
         if (currentItemOnCart != null) {
           currentItemOnCart.qty += int.parse(controller.text);
 
-          if (currentItemOnCart.qty == 0) {
+          if (currentItemOnCart.qty <= 0) {
             cart.remove(currentItemOnCart);
           }
         } else {
-          cart.add(Cart(itemToAdded, int.parse(controller.text)));
+          cart.add(
+            CartModel(
+              itemToAdded,
+              int.parse(controller.text),
+            ),
+          );
         }
 
         //lakukan penghitungan keseluruhan
         countTotal();
         controller.text = '0';
-        Get.snackbar('Notifikasi keranjang', 'Produk Berhasil Di masukkan');
       }
     }
   }
 
-  String convertToRupiah(int value) {
-    var format = NumberFormat.currency(locale: 'id_IDR', symbol: 'Rp');
-    return format.format(value);
-  }
-
   String getItemQty(String itemId) {
-    Cart? currentItemOnCart =
+    CartModel? currentItemOnCart =
         cart.firstWhereOrNull((element) => element.produk.idProduk == itemId);
 
     if (currentItemOnCart != null && currentItemOnCart.qty > 0) {
@@ -163,9 +232,22 @@ class BrowseViewModel extends ViewModel {
     return '';
   }
 
-  void goToInvoice() {
-    if (_total > 0) {
-      Get.toNamed(Routes.invoice);
+  void goToCart() async {
+    if (cart.isNotEmpty) {
+      //akan mengembalikan boolean yang akan di cek apabila pengguna berhasil menyimpan invoice
+      final invoiceSaved = await Get.toNamed(
+            Routes.cart,
+            arguments: [cart, total],
+
+          ) ??
+          false;
+
+      if (invoiceSaved) {
+        final cartLen = cart.length;
+        cart.removeRange(0, cartLen);
+        _total = 0;
+        notifyListeners();
+      }
     } else {
       Get.snackbar(
         "Tidak Bisa Ke Invoice",
