@@ -2,8 +2,9 @@ import 'package:json_annotation/json_annotation.dart';
 import 'dart:convert';
 
 @JsonSerializable()
-class LogTransaksi {
-  LogTransaksi({
+class LogTransaksiModel {
+
+  LogTransaksiModel({
     required this.invoiceId,
     required this.userId,
     required this.invoiceDetail,
@@ -26,8 +27,8 @@ class LogTransaksi {
   @JsonKey(name: 'created_at')
   final String createdAt;
 
-  factory LogTransaksi.fromJson(Map<String, dynamic> jsonValue) {
-    return LogTransaksi(
+  factory LogTransaksiModel.fromJson(Map<String, dynamic> jsonValue) {
+    return LogTransaksiModel(
       invoiceId: jsonValue['invoice_id'] as String,
       userId: jsonValue['user_id'] as String,
       invoiceDetail: json.decode(jsonValue['invoice_detail']),

@@ -38,7 +38,17 @@ class _View extends StatelessView<BrowseViewModel> {
                               "assets/images/not_found.png",
                               width: 150,
                             ),
-                            Text("Produk Tidak ditemukan"),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              child: Text(
+                                "Produk Tidak ditemukan",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
                           ],
                         ))
                       : ListView.builder(
@@ -58,23 +68,28 @@ class _View extends StatelessView<BrowseViewModel> {
                                           height: 100,
                                           child: FittedBox(
                                             fit: BoxFit.cover,
-                                            child: CachedNetworkImage(
-                                              imageUrl: viewModel
-                                                  .filteredData[index]
-                                                  .fotoProduk,
-                                              progressIndicatorBuilder:
-                                                  (context, url,
-                                                          downloadProgress) =>
-                                                      CircularProgressIndicator(
-                                                          value:
-                                                              downloadProgress
-                                                                  .progress),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Icon(Icons.error),
-                                              memCacheHeight: 200,
-                                              memCacheWidth: 200,
-                                              filterQuality: FilterQuality.none,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(45),
+                                              child: CachedNetworkImage(
+                                                imageUrl: viewModel
+                                                    .filteredData[index]
+                                                    .fotoProduk,
+                                                progressIndicatorBuilder:
+                                                    (context, url,
+                                                            downloadProgress) =>
+                                                        CircularProgressIndicator(
+                                                            value:
+                                                                downloadProgress
+                                                                    .progress),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        const Icon(Icons.error),
+                                                memCacheHeight: 200,
+                                                memCacheWidth: 200,
+                                                filterQuality:
+                                                    FilterQuality.none,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -245,13 +260,6 @@ class _View extends StatelessView<BrowseViewModel> {
             ],
           ),
         ),
-        if (viewModel.isBusy)
-          Container(
-            color: const Color.fromARGB(52, 0, 0, 0),
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
       ],
     );
   }

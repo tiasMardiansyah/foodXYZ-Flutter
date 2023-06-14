@@ -1,6 +1,8 @@
+
 import 'package:food_xyz_project/repositories.dart';
 
 class LoginViewModel extends ViewModel {
+
   final formkey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -22,9 +24,11 @@ class LoginViewModel extends ViewModel {
   }
 
   @override
-  void init() {
+  void init() async {
     apiCall = Get.find<ApiProvider>();
   }
+
+  //digunakan untuk mengecek apakah user sudah login
 
   void validate() async {
     if (formkey.currentState!.validate()) {

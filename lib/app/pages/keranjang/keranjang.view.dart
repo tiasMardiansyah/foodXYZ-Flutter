@@ -39,41 +39,34 @@ class _View extends StatelessView<InvoiceViewModel> {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              children: [
-                DataTable(
-                    headingTextStyle: headerStyle(),
-                    dataTextStyle: cellStyle(),
-                    showBottomBorder: true,
-                    columns: const <DataColumn>[
-                      DataColumn(
-                        label: Text(
-                          'Nama',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      DataColumn(
-                        label: Text(
-                          'Harga',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      DataColumn(
-                        label: Text(
-                          'QTY',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      DataColumn(
-                        label: Text(
-                          'SubTotal',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                    rows: viewModel.setRow()),
-              ],
-            ),
+            child: DataTable2(
+                headingTextStyle: headerStyle(),
+                dataTextStyle: cellStyle(),
+                showBottomBorder: true,
+                columns: const [
+                  DataColumn(
+                    label: Center(
+                      child: Text('Nama'),
+                    ),
+                  ),
+                  DataColumn2(
+                    size: ColumnSize.L,
+                    label: Center(
+                      child: Text('Harga'),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Center(
+                      child: Text('QTY'),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Center(
+                      child: Text('SubTotal'),
+                    ),
+                  ),
+                ],
+                rows: viewModel.setRow()),
           ),
           Container(
             padding: const EdgeInsets.symmetric(
@@ -148,11 +141,11 @@ class _View extends StatelessView<InvoiceViewModel> {
     return const TextStyle(
       fontWeight: FontWeight.bold,
       color: Colors.black,
-      fontSize: 16,
+      fontSize: 12,
     );
   }
 
   TextStyle cellStyle() {
-    return const TextStyle(fontSize: 11, color: Colors.black);
+    return const TextStyle(fontSize: 10, color: Colors.black);
   }
 }

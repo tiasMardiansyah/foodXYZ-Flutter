@@ -182,8 +182,8 @@ class ApiProvider extends GetConnect {
       final jsonString = jsonEncode(cart);
 
       final data = {
-          "invoice-detail" : jsonString,
-          "total-bayar" : totalBayar.toString(),    
+        "invoice-detail": jsonString,
+        "total-bayar": totalBayar.toString(),
       };
 
       final encodedData = data.entries.map(
@@ -191,15 +191,12 @@ class ApiProvider extends GetConnect {
       );
       final body = encodedData.join('&');
 
-
       final response = await request(
         ApiEndPoint.logTransaksi,
         "POST",
-        body : body,
+        body: body,
         headers: {'Authorization': 'bearer $token'},
       );
-
-      
 
       if (response.hasError) {
         var error = {
@@ -209,6 +206,36 @@ class ApiProvider extends GetConnect {
         throw error;
       }
       return Future.value(response.body);
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteLogTransaksi(
+      String token, String id) async {
+    try {
+      final response = await request(
+        ApiEndPoint.getLogTransaksi(id: id),
+        "DELETE",
+        headers: {"Authorization": "bearer $token"},
+      );
+
+      if (response.hasError) {
+        var error = {
+          'statusCode': response.statusCode ?? '500',
+          'statusText': response.statusText ?? 'kesalahan dalam mengambil data'
+        };
+
+        throw error;
+      }
+
+      var result = {
+        'statusCode': response.statusCode,
+        'statusText': response.statusText,
+      };
+
+      return result;
+      
     } catch (e) {
       return Future.error(e);
     }

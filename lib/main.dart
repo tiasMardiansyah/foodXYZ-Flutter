@@ -1,9 +1,9 @@
 import 'package:food_xyz_project/repositories.dart';
 
 void main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
-  const tokenStorage = FlutterSecureStorage(); 
+
+  const tokenStorage = FlutterSecureStorage();
 
   runApp(
     GetMaterialApp(

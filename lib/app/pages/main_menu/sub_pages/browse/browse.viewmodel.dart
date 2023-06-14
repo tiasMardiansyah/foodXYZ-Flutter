@@ -18,11 +18,7 @@ class BrowseViewModel extends ViewModel {
   set filteredData(List<ProdukModel> value) {
     _filteredData = value;
     controllers = List.generate(
-      filteredData.length,
-      (index) => TextEditingController(
-        text: '0',
-      ),
-    );
+        filteredData.length, (index) => TextEditingController(text: '0'));
     notifyListeners();
   }
 
@@ -69,6 +65,7 @@ class BrowseViewModel extends ViewModel {
 
   Future<void> getMasterData() async {
     try {
+      isBusy = true;
       final token = await tokenStorage.read(key: 'accessToken');
       if (token == null) {
         final error = {
@@ -82,6 +79,7 @@ class BrowseViewModel extends ViewModel {
       for (var n = 0; n < result.length; n++) {
         masterData.add(ProdukModel.fromJson(result[n]));
       }
+
     } catch (e) {
       if (e is Map<String, dynamic>) {
         switch (e['statusCode']) {
@@ -106,8 +104,6 @@ class BrowseViewModel extends ViewModel {
               Get.offNamed(Routes.login);
             }
             break;
-
-          //dan error lain nya
         }
       } else {
         showWarningDialog(
@@ -116,6 +112,8 @@ class BrowseViewModel extends ViewModel {
           texts: ['Hubungi developer apabila anda melihat pesan ini'],
         );
       }
+    } finally {
+      isBusy = false;
     }
   }
 
@@ -127,6 +125,8 @@ class BrowseViewModel extends ViewModel {
 
   void onJumlahProdukDikurang(String itemId, TextEditingController controller) {
     int qty = int.parse(controller.text);
+
+    //ambil produk di keranjang menggunakan id
     CartModel? itemToUpdate =
         cart.firstWhereOrNull((element) => element.produk.idProduk == itemId);
 
@@ -238,7 +238,6 @@ class BrowseViewModel extends ViewModel {
       final invoiceSaved = await Get.toNamed(
             Routes.cart,
             arguments: [cart, total],
-
           ) ??
           false;
 

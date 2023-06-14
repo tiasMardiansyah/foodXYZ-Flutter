@@ -41,27 +41,32 @@ class InvoiceViewModel extends ViewModel {
         DataRow(
           cells: <DataCell>[
             DataCell(
-              Text(
-                cart[n].produk.namaProduk,
-                softWrap: true,
+              Center(
+                child: Text(
+                  cart[n].produk.namaProduk,
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
             DataCell(
-              Text(
-                intToRupiah(cart[n].produk.hargaProduk),
-                softWrap: true,
+              Center(
+                child: Text(
+                  intToRupiah(cart[n].produk.hargaProduk),
+                ),
               ),
             ),
             DataCell(
-              Text(
-                cart[n].qty.toString(),
-                softWrap: true,
+              Center(
+                child: Text(
+                  cart[n].qty.toString(),
+                ),
               ),
             ),
             DataCell(
-              Text(
-                intToRupiah(cart[n].produk.hargaProduk * cart[n].qty),
-                softWrap: true,
+              Center(
+                child: Text(
+                  intToRupiah(cart[n].produk.hargaProduk * cart[n].qty),
+                ),
               ),
             ),
           ],
@@ -71,8 +76,49 @@ class InvoiceViewModel extends ViewModel {
     return barisTabelProduk;
   }
 
-  void shareInvoice() {
-    //TODO implementasi sharing invoice
+  void shareInvoice() async {
+    try {
+      String? token = await tokenStorage.read(key: "accessToken");
+      if (token == null) {
+        var error = {
+          "statusCode": "404",
+          "statusText": "Token Tidak Ditemukan",
+        };
+        throw error;
+      }
+
+      UserModel userProfile =
+          UserModel.fromJson(await apiCall.getProfile(token));
+      await Printing.sharePdf(
+          bytes: await InvoiceToPdf.fromCart(cart, userProfile, _totalBayar),
+          filename: "Foodxyz-Invoice-(${userProfile.namaLengkap}).pdf");
+    } catch (e) {
+      if (e is Map<String, dynamic>) {
+        switch (e['statusCode']) {
+          case 404:
+            {
+              await showWarningDialog(
+                title: 'Kredensial akun tidak ditemukan',
+                icon: Image.asset('assets/images/not_found.png'),
+                texts: ['Harap login kembali'],
+              );
+              Get.offNamed(Routes.login);
+            }
+            break;
+
+          case 401:
+            {
+              //do something, like refresh the token
+            }
+        }
+      } else {
+        showWarningDialog(
+          title: 'Error Besar',
+          icon: Image.asset('assets/images/warning_sign.png'),
+          texts: ['Hubungi developer apabila anda melihat pesan ini'],
+        );
+      }
+    }
   }
 
   Future<void> saveInvoice() async {
@@ -88,14 +134,26 @@ class InvoiceViewModel extends ViewModel {
           throw error;
         }
 
+        UserModel userProfile =
+            UserModel.fromJson(await apiCall.getProfile(token));
+
         await apiCall.createLogTransaksi(cart, _totalBayar, token);
         await showWarningDialog(
           title: 'Transaksi berhasil',
           icon: Image.asset('assets/images/check.png'),
           texts: ['Transaksi anda sudah dicatat'],
         );
-        close(isSaved: true);
 
+        bool confirmed = await showConfirmDialog(
+            title: "Invoice", texts: ["Lihat Preview Catatan Pembayaran?"]);
+
+        if (confirmed) {
+          await Get.toNamed(Routes.pdfPreview, arguments: [
+            await InvoiceToPdf.fromCart(cart, userProfile, _totalBayar)
+          ]);
+        }
+
+        close(isSaved: true);
       } catch (e) {
         if (e is Map<String, dynamic>) {
           switch (e['statusCode']) {

@@ -1,22 +1,31 @@
 import 'package:food_xyz_project/repositories.dart';
 
-class CatatanPembelianViewModel extends ViewModel {
-
-  List<LogTransaksi>? masterData = [];
+class LogTransaksiViewModel extends ViewModel {
+  List<LogTransaksiModel>? logsTransaksi = [];
   late ApiProvider apiCall;
   final tokenStorage = const FlutterSecureStorage();
 
   bool _isBusy = false;
-  bool get isBusy =>_isBusy;
+  bool get isBusy => _isBusy;
   set isBusy(bool value) {
     _isBusy = value;
     notifyListeners();
-  } 
-  
+  }
+
   @override
-  void init() async{
+  void init() async {
     apiCall = Get.find<ApiProvider>();
     await getLogTransaksi();
+  }
+
+  void goToDetail(int index) async {
+    final logIsDeleted = await Get.toNamed(Routes.detailLogTransaksi,
+        arguments: [logsTransaksi?[index]]);
+
+    if (logIsDeleted is bool && logIsDeleted == true) {
+      logsTransaksi!.removeAt(index);
+      notifyListeners();
+    }
   }
 
   Future<void> getLogTransaksi() async {
@@ -33,7 +42,7 @@ class CatatanPembelianViewModel extends ViewModel {
 
       final result = await apiCall.getLogTransaksi(token);
       for (var n = 0; n < result.length; n++) {
-        masterData?.add((LogTransaksi.fromJson(result[n])));
+        logsTransaksi?.add((LogTransaksiModel.fromJson(result[n])));
       }
     } catch (e) {
       if (e is Map<String, dynamic>) {
@@ -72,13 +81,8 @@ class CatatanPembelianViewModel extends ViewModel {
     } finally {
       isBusy = false;
     }
-
   }
-  
 
-
-
-
-
+  //void goToLogDetail() => Get.toNamed();
   void back() => Get.back();
 }
