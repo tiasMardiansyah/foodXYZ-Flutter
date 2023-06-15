@@ -157,21 +157,27 @@ class InvoiceViewModel extends ViewModel {
       } catch (e) {
         if (e is Map<String, dynamic>) {
           switch (e['statusCode']) {
-            case 404:
-              {
-                await showWarningDialog(
-                  title: 'Kredensial akun tidak ditemukan',
-                  icon: Image.asset('assets/images/not_found.png'),
-                  texts: ['Harap login kembali'],
-                );
-                Get.offNamed(Routes.login);
-              }
-              break;
-
             case 401:
-              {
-                //do something, like refresh the token
-              }
+            {
+              await showWarningDialog(
+                title: 'Token sudah kadaluarsa',
+                icon: Image.asset('assets/images/not_found.png'),
+                texts: ['Harap login kembali'],
+              );
+              Get.offNamed(Routes.login);
+            }
+            break;
+
+          case 404:
+            {
+              await showWarningDialog(
+                title: 'Kredensial akun tidak ditemukan',
+                icon: Image.asset('assets/images/not_found.png'),
+                texts: ['Sepertinya yang anda minta tidak tersedia'],
+              );
+              Get.offNamed(Routes.login);
+            }
+            break;
           }
         } else {
           showWarningDialog(

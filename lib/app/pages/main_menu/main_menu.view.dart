@@ -20,6 +20,7 @@ class _View extends StatelessView<MainMenuViewModel> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 238, 238, 238),
       appBar: viewModel.getCurrentAppBar(),
+      
       body: viewModel.getCurrentSubPage(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -36,11 +37,5 @@ class _View extends StatelessView<MainMenuViewModel> {
         onTap: viewModel.navBarChanged,
       ),
     );
-  }
-
-  
+  }  
 }
-
-/*  untuk referensi ganti panel
-  [Login(),Login(),][viewModel.currentIndex] 
-*/

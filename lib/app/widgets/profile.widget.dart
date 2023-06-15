@@ -32,10 +32,7 @@ class ProfileWidget extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: customHeaderBold(),
               ),
               Text(phoneNumber),
               Text(address),

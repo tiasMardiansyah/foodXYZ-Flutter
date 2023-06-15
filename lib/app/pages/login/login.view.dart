@@ -33,14 +33,11 @@ class _View extends StatelessView<LoginViewModel> {
                       'assets/images/fast_food.png',
                       width: 125,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
                       child: Text(
                         'Login',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: customHeaderBold()
                       ),
                     ),
                     Padding(
@@ -83,11 +80,7 @@ class _View extends StatelessView<LoginViewModel> {
               ),
             ),
           ),
-          if (viewModel.isBusy)
-            Container(
-              color: const Color.fromARGB(52, 0, 0, 0),
-              child: const Center(child: CircularProgressIndicator()),
-            )
+          if (viewModel.isBusy) const LoadingWidget()
         ],
       ),
     );

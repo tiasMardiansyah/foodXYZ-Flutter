@@ -14,253 +14,264 @@ class Browse extends StatelessWidget {
 class _View extends StatelessView<BrowseViewModel> {
   @override
   Widget render(BuildContext context, BrowseViewModel viewModel) {
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              CustomSearchBar(
-                onChanged: viewModel.onSearchKeywordChanged,
-                searchController: viewModel.searchController,
-                displayText: 'Cari Item',
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                  child: viewModel.filteredData.isEmpty
-                      ? Center(
-                          child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              "assets/images/not_found.png",
-                              width: 150,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              child: Text(
-                                "Produk Tidak ditemukan",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          CustomSearchBar(
+            onChanged: viewModel.onSearchKeywordChanged,
+            searchController: viewModel.searchController,
+            displayText: 'Cari Item',
+          ),
+          TabBar(
+            controller: viewModel.tabController,
+            tabs : viewModel.tabs.map((tab) => Tab(text: tab)).toList(),
+
+          ),
+          Expanded(
+            child: viewModel.isBusy
+                ? const LoadingWidget(bgColor: Colors.transparent)
+                : RefreshIndicator(
+                    onRefresh: viewModel.getMasterData,
+                    child: viewModel.filteredData.isEmpty
+                        ? Center(
+                            child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  "assets/images/not_found.png",
+                                  width: 150,
                                 ),
-                              ),
-                            ),
-                          ],
-                        ))
-                      : ListView.builder(
-                          itemCount: viewModel.filteredData.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Card(
-                              elevation: 5,
-                              child: Row(
-                                children: [
-                                  Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 10),
-                                        child: SizedBox(
-                                          width: 100,
-                                          height: 100,
-                                          child: FittedBox(
-                                            fit: BoxFit.cover,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(45),
-                                              child: CachedNetworkImage(
-                                                imageUrl: viewModel
-                                                    .filteredData[index]
-                                                    .fotoProduk,
-                                                progressIndicatorBuilder:
-                                                    (context, url,
-                                                            downloadProgress) =>
-                                                        CircularProgressIndicator(
-                                                            value:
-                                                                downloadProgress
-                                                                    .progress),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        const Icon(Icons.error),
-                                                memCacheHeight: 200,
-                                                memCacheWidth: 200,
-                                                filterQuality:
-                                                    FilterQuality.none,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 10),
+                                  child: Text(
+                                    "Tidak ada Barang",
+                                    style: customHeaderBold(),
                                   ),
-                                  Expanded(
-                                    child: Column(
+                                ),
+                              ],
+                            ),
+                          ))
+                        : ListView.builder(
+                            itemCount: viewModel.filteredData.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Card(
+                                elevation: 5,
+                                child: Row(
+                                  children: [
+                                    Column(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 8.0),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  viewModel.filteredData[index]
-                                                      .namaProduk,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ),
-                                              const Icon(
-                                                Icons.star,
-                                                color: Colors.yellow,
-                                                size: 18,
-                                              ),
-                                              const SizedBox(
-                                                width: 5,
-                                              ),
-                                              Text(
-                                                viewModel
-                                                    .filteredData[index].rating
-                                                    .toString(),
-                                                style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0,
-                                            vertical: 5.0,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  intToRupiah(viewModel
+                                              horizontal: 10, vertical: 10),
+                                          child: SizedBox(
+                                            width: 100,
+                                            height: 100,
+                                            child: FittedBox(
+                                              fit: BoxFit.cover,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(45),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: viewModel
                                                       .filteredData[index]
-                                                      .hargaProduk),
+                                                      .fotoProduk,
+                                                  progressIndicatorBuilder: (context,
+                                                          url,
+                                                          downloadProgress) =>
+                                                      CircularProgressIndicator(
+                                                          value:
+                                                              downloadProgress
+                                                                  .progress),
+                                                  errorWidget: (context, url,
+                                                          error) =>
+                                                      const Icon(Icons.error),
+                                                  memCacheHeight: 200,
+                                                  memCacheWidth: 200,
+                                                  filterQuality:
+                                                      FilterQuality.none,
                                                 ),
-                                              ),
-                                              Text(viewModel.getItemQty(
-                                                  viewModel.filteredData[index]
-                                                      .idProduk)),
-                                            ],
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Row(
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      viewModel
-                                                          .onJumlahProdukDikurang(
-                                                        viewModel
-                                                            .filteredData[index]
-                                                            .idProduk,
-                                                        viewModel
-                                                            .controllers[index],
-                                                      );
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons.remove_circle,
-                                                      color: Colors.red,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Expanded(
-                                                    child: TextField(
-                                                      controller: viewModel
-                                                          .controllers[index],
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      style: const TextStyle(),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      viewModel
-                                                          .onTambahJumlahProduk(
-                                                        viewModel
-                                                            .controllers[index],
-                                                      );
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons.add_circle,
-                                                      color: Colors.green,
-                                                    ),
-                                                  ),
-                                                ],
                                               ),
                                             ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 8.0,
-                                              ),
-                                              child: ElevatedButton(
-                                                onPressed: () {
-                                                  viewModel.addToCart(
-                                                    viewModel
-                                                        .filteredData[index]
-                                                        .idProduk,
-                                                    viewModel
-                                                        .controllers[index],
-                                                  );
-                                                },
-                                                child: const Icon(
-                                                    Icons.shopping_cart),
-                                              ),
-                                            )
-                                          ],
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    viewModel
+                                                        .getNamaProduk(index),
+                                                    style: customBodyBold(),
+                                                  ),
+                                                ),
+                                                const Icon(
+                                                  Icons.star,
+                                                  color: Colors.yellow,
+                                                  size: 18,
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                    viewModel.getRatingProduk(
+                                                        index),
+                                                    style: customBodyBold())
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0,
+                                              vertical: 5.0,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(viewModel
+                                                      .getHargaProduk(index)),
+                                                ),
+                                                Text(
+                                                  viewModel.getItemQty(viewModel
+                                                      .filteredData[index]
+                                                      .idProduk),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Row(
+                                                  children: [
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        viewModel
+                                                            .onJumlahProdukDikurang(
+                                                          viewModel
+                                                              .filteredData[
+                                                                  index]
+                                                              .idProduk,
+                                                          viewModel.controllers[
+                                                              index],
+                                                        );
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.remove_circle,
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Expanded(
+                                                      child: TextField(
+                                                        controller: viewModel
+                                                            .controllers[index],
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        style:
+                                                            const TextStyle(),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        viewModel
+                                                            .onTambahJumlahProduk(
+                                                          viewModel.controllers[
+                                                              index],
+                                                        );
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.add_circle,
+                                                        color: Colors.green,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 8.0,
+                                                ),
+                                                child: ElevatedButton(
+                                                  onPressed: () {
+                                                    viewModel.addToCart(
+                                                      viewModel
+                                                          .getIdProduk(index),
+                                                      viewModel
+                                                          .controllers[index],
+                                                    );
+                                                  },
+                                                  child: const Icon(
+                                                      Icons.shopping_cart),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                   ),
-                ),
-                onPressed: viewModel.goToCart,
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Text('Bayar'),
-                    ),
-                    Expanded(
-                      child: Text(
-                        intToRupiah(viewModel.total),
-                        textAlign: TextAlign.end,
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
           ),
-        ),
-      ],
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            onPressed: viewModel.goToCart,
+            child: Row(
+              children: [
+                const Expanded(
+                  child: Text('Bayar'),
+                ),
+                Expanded(
+                  child: Text(
+                    intToRupiah(viewModel.total),
+                    textAlign: TextAlign.end,
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
+
+/*
+class TabView extends HookView<BrowseViewModel> {
+
+  TabView({super.key, this.filter})
+  String? filter;
+
+  @override
+  Widget render(BuildContext context, BrowseViewModel viewModel) {
+    
+  }
+
+}
+
+*/

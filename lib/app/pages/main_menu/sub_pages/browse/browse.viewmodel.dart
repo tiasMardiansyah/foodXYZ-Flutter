@@ -1,8 +1,12 @@
 import 'package:food_xyz_project/repositories.dart';
 
 class BrowseViewModel extends ViewModel {
-  final searchController = TextEditingController();
 
+  final tabController = useTabController(initialLength : 2);
+  final tabs = ['Tab 1', 'Tab 2'];
+
+
+  final searchController = TextEditingController();
   //seluruh produk akan disimpan di variabel dibawah
   List<ProdukModel> masterData = [];
 
@@ -15,15 +19,23 @@ class BrowseViewModel extends ViewModel {
   //ketimbang mengambil produk langsung dari master data, variabel ini dibuat untuk mengambil produk yang sesuai dengan pencarian
   List<ProdukModel> _filteredData = [];
   List<ProdukModel> get filteredData => _filteredData;
+
   set filteredData(List<ProdukModel> value) {
     _filteredData = value;
     controllers = List.generate(
-        filteredData.length, (index) => TextEditingController(text: '0'));
+        _filteredData.length, (index) => TextEditingController(text: '0'));
     notifyListeners();
   }
 
-  List<CartModel> _cart = [];
+  String getNamaProduk(int index) => _filteredData[index].namaProduk;
+  String getRatingProduk(int index) => _filteredData[index].rating.toString();
+  String getHargaProduk(int index) => intToRupiah(_filteredData[index].hargaProduk);
+
+  String getIdProduk(int index) => _filteredData[index].idProduk;
+
+  final List<CartModel> _cart = [];
   List<CartModel> get cart => _cart;
+
 
   //total harga keseluruhan produk yang dipilih
   int _total = 0;
@@ -56,14 +68,11 @@ class BrowseViewModel extends ViewModel {
   void init() async {
     //ambil data dari luar terlebih dahulu
     apiCall = Get.find<ApiProvider>();
-    await getMasterData();
-
-    //tampilkan seluruh menu pada awal tampilan menu browsing
-    filteredData = masterData;
-    countTotal();
+    filteredData = await getMasterData();
   }
 
-  Future<void> getMasterData() async {
+
+  Future<List<ProdukModel>> getMasterData() async {
     try {
       isBusy = true;
       final token = await tokenStorage.read(key: 'accessToken');
@@ -75,10 +84,16 @@ class BrowseViewModel extends ViewModel {
         throw error;
       }
 
+      if (masterData.isNotEmpty) {
+        masterData.removeRange(0, masterData.length);
+      }
+
       final result = await apiCall.getProduk(token);
       for (var n = 0; n < result.length; n++) {
         masterData.add(ProdukModel.fromJson(result[n]));
       }
+
+      return Future.value(masterData);
 
     } catch (e) {
       if (e is Map<String, dynamic>) {
@@ -112,6 +127,8 @@ class BrowseViewModel extends ViewModel {
           texts: ['Hubungi developer apabila anda melihat pesan ini'],
         );
       }
+
+      return Future.error(e);
     } finally {
       isBusy = false;
     }

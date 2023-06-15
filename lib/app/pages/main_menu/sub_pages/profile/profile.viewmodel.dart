@@ -45,6 +45,17 @@ class ProfileViewModel extends ViewModel {
     } catch (e) {
       if (e is Map<String, dynamic>) {
         switch (e['statusCode']) {
+          case 401:
+            {
+              await showWarningDialog(
+                title: 'Token sudah kadaluarsa',
+                icon: Image.asset('assets/images/not_found.png'),
+                texts: ['Harap login kembali'],
+              );
+              Get.offNamed(Routes.login);
+            }
+            break;
+
           case 404:
             {
               await showWarningDialog(
@@ -55,11 +66,6 @@ class ProfileViewModel extends ViewModel {
               Get.offNamed(Routes.login);
             }
             break;
-
-          case 401:
-            {
-              //do something, like refresh the token
-            }
         }
       } else {
         showWarningDialog(

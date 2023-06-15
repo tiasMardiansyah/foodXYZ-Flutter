@@ -147,6 +147,7 @@ class ApiProvider extends GetConnect {
         var error = {
           'statusCode': response.statusCode ?? '500',
           'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
+          'body' : response.body
         };
 
         throw error;

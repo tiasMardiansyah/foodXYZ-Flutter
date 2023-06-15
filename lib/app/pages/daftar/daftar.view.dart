@@ -28,14 +28,11 @@ class _View extends StatelessView<DaftarViewModel> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
                       child: Text(
                         'Silahkan Isi data pribadi anda',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: customHeaderBold(),
                       ),
                     ),
                     Padding(
@@ -88,13 +85,7 @@ class _View extends StatelessView<DaftarViewModel> {
               ),
             ),
           ),
-          if (viewModel.isBusy)
-            Container(
-              color: const Color.fromARGB(54, 0, 0, 0),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
+          if (viewModel.isBusy) const LoadingWidget()
         ],
       ),
     );

@@ -20,11 +20,7 @@ class _View extends StatelessView<LogTransaksiViewModel> {
         centerTitle: true,
         backgroundColor: Colors.white,
         title: const Text('Catatan pembelian'),
-        titleTextStyle: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
+        titleTextStyle: customHeaderBold(),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
@@ -37,12 +33,7 @@ class _View extends StatelessView<LogTransaksiViewModel> {
         children: [
           Expanded(
             child: viewModel.isBusy
-                ? Container(
-                    color: const Color.fromARGB(54, 0, 0, 0),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
+                ? const LoadingWidget()
                 : ListView.builder(
                     itemCount: viewModel.logsTransaksi?.length ?? 0,
                     itemBuilder: ((context, index) {

@@ -1,6 +1,5 @@
 import 'package:food_xyz_project/repositories.dart';
 
-//
 
 class MainMenuViewModel extends ViewModel {
   // ignore: prefer_final_fields
@@ -18,12 +17,10 @@ class MainMenuViewModel extends ViewModel {
   }
 
   Widget? getCurrentSubPage() {
-    //return IndexedStack(
-    //  index: _currentIndex,
-    //  children: _pages,
-    //);
-
-    return _pages[_currentIndex];
+    return IndexedStack(
+      index: _currentIndex,
+      children: _pages,
+    );
   }
 
   PreferredSizeWidget? getCurrentAppBar() {
@@ -34,12 +31,9 @@ class MainMenuViewModel extends ViewModel {
           return AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            titleTextStyle: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+            titleTextStyle: customHeaderBold(),
             title: const Text('Aplikasi Food XYZ'),
+            
           );
         }
 
@@ -49,11 +43,7 @@ class MainMenuViewModel extends ViewModel {
           return AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            titleTextStyle: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+            titleTextStyle: customHeaderBold(),
             title: const Text('Profile'),
             centerTitle: true,
           );
