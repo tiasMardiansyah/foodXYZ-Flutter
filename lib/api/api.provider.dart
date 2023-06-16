@@ -21,6 +21,8 @@ class ApiProvider extends GetConnect {
     required String passwordConfirm,
   }) async {
     try {
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+      if (!isConnected) throw AppError.noConnection;
       final data = {
         'nama-lengkap': namaLengkap,
         'username': username,
@@ -43,7 +45,7 @@ class ApiProvider extends GetConnect {
       );
 
       if (response.hasError) {
-        var error = {
+        final error = {
           'statusCode': response.statusCode ?? '500',
           'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
           'messages': response.body['messages'],
@@ -68,6 +70,9 @@ class ApiProvider extends GetConnect {
     required password,
   }) async {
     try {
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+      if (!isConnected) throw AppError.noConnection;
+
       final data = {
         'grant_type': 'password',
         'username': username,
@@ -91,7 +96,7 @@ class ApiProvider extends GetConnect {
       );
 
       if (response.hasError) {
-        var error = {
+        final error = {
           'statusCode': response.statusCode ?? '500',
           'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
         };
@@ -119,7 +124,7 @@ class ApiProvider extends GetConnect {
       );
 
       if (response.hasError) {
-        var error = {
+        final error = {
           'statusCode': response.statusCode ?? '500',
           'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
           'error': response.body['error_description'],
@@ -135,6 +140,8 @@ class ApiProvider extends GetConnect {
 
   Future<dynamic> getProduk(String token) async {
     try {
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+      if (!isConnected) throw AppError.noConnection;
       final response = await request(
         ApiEndPoint.produk,
         'GET',
@@ -144,10 +151,10 @@ class ApiProvider extends GetConnect {
       );
 
       if (response.hasError) {
-        var error = {
+        final error = {
           'statusCode': response.statusCode ?? '500',
           'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
-          'body' : response.body
+          'body': response.body
         };
 
         throw error;
@@ -160,8 +167,14 @@ class ApiProvider extends GetConnect {
 
   Future<dynamic> getLogTransaksi(String token) async {
     try {
-      final response = await request(ApiEndPoint.logTransaksi, 'Get',
-          headers: {'Authorization': 'bearer $token'});
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+      if (!isConnected) throw AppError.noConnection;
+
+      final response = await request(
+        ApiEndPoint.logTransaksi,
+        'Get',
+        headers: {'Authorization': 'bearer $token'},
+      );
 
       if (response.hasError) {
         var error = {
@@ -179,6 +192,9 @@ class ApiProvider extends GetConnect {
   Future<Map<String, dynamic>> createLogTransaksi(
       List<CartModel> cart, int totalBayar, String token) async {
     try {
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+      if (!isConnected) throw AppError.noConnection;
+
       //ubah menjadi json
       final jsonString = jsonEncode(cart);
 
@@ -200,7 +216,7 @@ class ApiProvider extends GetConnect {
       );
 
       if (response.hasError) {
-        var error = {
+        final error = {
           'statusCode': response.statusCode ?? '500',
           'statusText': response.statusText ?? 'kesalahan dalam mengambil data',
         };
@@ -215,6 +231,9 @@ class ApiProvider extends GetConnect {
   Future<Map<String, dynamic>> deleteLogTransaksi(
       String token, String id) async {
     try {
+      bool isConnected = await InternetConnectionChecker().hasConnection;
+      if (!isConnected) throw AppError.noConnection;
+
       final response = await request(
         ApiEndPoint.getLogTransaksi(id: id),
         "DELETE",
@@ -222,7 +241,7 @@ class ApiProvider extends GetConnect {
       );
 
       if (response.hasError) {
-        var error = {
+        final error = {
           'statusCode': response.statusCode ?? '500',
           'statusText': response.statusText ?? 'kesalahan dalam mengambil data'
         };
@@ -236,7 +255,6 @@ class ApiProvider extends GetConnect {
       };
 
       return result;
-      
     } catch (e) {
       return Future.error(e);
     }

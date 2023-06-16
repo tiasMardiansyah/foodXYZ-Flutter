@@ -17,12 +17,16 @@ class ProdukModel {
   @JsonKey(name: 'rating')
   final double rating;
 
+  @JsonKey(name: 'jenis')
+  final String jenis;
+
   ProdukModel({
     required this.idProduk,
     required this.fotoProduk,
     required this.namaProduk,
     required this.hargaProduk,
     required this.rating,
+    required this.jenis,
   });
 
   factory ProdukModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +36,7 @@ class ProdukModel {
       namaProduk: json['nama_produk'] as String,
       hargaProduk: int.parse(json['harga_produk']),
       rating: double.parse(json['rating']),
+      jenis: json['jenis'] as String,
     );
   }
 
@@ -42,6 +47,7 @@ class ProdukModel {
       'nama_produk': namaProduk,
       'harga_produk': hargaProduk,
       'rating': rating,
+      'jenis' : jenis,
     };
   }
 }

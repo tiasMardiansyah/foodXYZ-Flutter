@@ -14,6 +14,7 @@ class Profile extends StatelessWidget {
 class _View extends StatelessView<ProfileViewModel> {
   @override
   Widget render(BuildContext context, ProfileViewModel viewModel) {
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,

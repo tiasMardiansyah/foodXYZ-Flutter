@@ -15,3 +15,18 @@ TextStyle? customBodyBold({Color cr = const Color.fromARGB(255, 0, 0, 0)}) {
     color: Colors.black,
   );
 }
+
+TextStyle? customTabBarBold({Color cr = const Color.fromARGB(255, 0, 0, 0)}) {
+  return const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: Color.fromARGB(255, 0, 0, 0),
+  );
+}
+
+TextStyle? customTabBar({Color cr = const Color.fromARGB(255, 0, 0, 0)}) {
+  return const TextStyle(
+    fontSize: 16,
+    color: Colors.black,
+  );
+}

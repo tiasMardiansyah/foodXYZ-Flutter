@@ -7,17 +7,14 @@ class ProfileViewModel extends ViewModel {
     notifyListeners();
   }
 
-  String getName() {
-    return _userProfile == null ? 'Loading' : _userProfile!.namaLengkap;
-  }
+  String getName() =>
+      _userProfile == null ? 'Loading' : _userProfile!.namaLengkap;
 
-  String getAddress() {
-    return _userProfile == null ? 'Loading' : _userProfile!.alamat;
-  }
+  String getAddress() =>
+      _userProfile == null ? 'Loading' : _userProfile!.alamat;
 
-  String getPhone() {
-    return _userProfile == null ? 'Loading' : _userProfile!.noTelepon;
-  }
+  String getPhone() =>
+      _userProfile == null ? 'Loading' : _userProfile!.noTelepon;
 
   final tokenStorage = const FlutterSecureStorage();
   late ApiProvider apiCall;
@@ -32,55 +29,19 @@ class ProfileViewModel extends ViewModel {
     try {
       String? token = await tokenStorage.read(key: 'accessToken');
       if (token == null) {
-        var error = {
-          'statusCode': 404,
-          'statusText': 'Not Found',
-        };
-        throw error;
+        throw AppError.tokenNotFound;
       }
-
-      
       userProfile = UserModel.fromJson(await apiCall.getProfile(token));
       notifyListeners();
     } catch (e) {
-      if (e is Map<String, dynamic>) {
-        switch (e['statusCode']) {
-          case 401:
-            {
-              await showWarningDialog(
-                title: 'Token sudah kadaluarsa',
-                icon: Image.asset('assets/images/not_found.png'),
-                texts: ['Harap login kembali'],
-              );
-              Get.offNamed(Routes.login);
-            }
-            break;
-
-          case 404:
-            {
-              await showWarningDialog(
-                title: 'Kredensial akun tidak ditemukan',
-                icon: Image.asset('assets/images/not_found.png'),
-                texts: ['Harap login kembali'],
-              );
-              Get.offNamed(Routes.login);
-            }
-            break;
-        }
-      } else {
-        showWarningDialog(
-          title: 'Error Besar',
-          icon: Image.asset('assets/images/warning_sign.png'),
-          texts: ['Hubungi developer apabila anda melihat pesan ini'],
-        );
-      }
+      errorHandler(e);
     }
   }
 
   Future<void> logout() async {
     bool userConfirmed = await showConfirmDialog(texts: ['Yakin ingin Logout']);
     if (userConfirmed) {
-      await tokenStorage.delete(key:'accessToken');
+      await tokenStorage.delete(key: 'accessToken');
       await tokenStorage.delete(key: 'refreshToken');
       Get.offNamed(Routes.login);
     }

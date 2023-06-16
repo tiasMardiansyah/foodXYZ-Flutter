@@ -1,8 +1,6 @@
-
 import 'package:food_xyz_project/repositories.dart';
 
 class LoginViewModel extends ViewModel {
-
   final formkey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -47,29 +45,18 @@ class LoginViewModel extends ViewModel {
 
         Get.offNamed(Routes.mainMenu);
       } catch (e) {
-        if (e 
-        is Map<String, dynamic> && e['statusCode'] == 401) {
-          showWarningDialog(
-            title: 'Akun tidak ditemukan',
-            icon: Image.asset('assets/images/not_found.png'),
-            texts: [
-              'Cek Kembali Password dan username yang dimasukan',
-            ],
-          );
-        } else {
-          showWarningDialog(
-            title: 'Error besar',
-            icon: Image.asset('assets/images/warning_sign.png'),
-            texts: [
-              'Hubungi developer apabila anda melihat pesan ini',
-            ],
-          );
-        }
+        errorHandler(e, warningText: {
+          401: [
+            "Akun Tidak Ditemukan, Coba Cek password dan username yang dimasukan"
+          ]
+        });
       } finally {
         isBusy = false;
       }
     }
   }
 
-  void goToDaftar() => Get.toNamed(Routes.daftar, );
+  void goToDaftar() => Get.toNamed(
+        Routes.daftar,
+      );
 }

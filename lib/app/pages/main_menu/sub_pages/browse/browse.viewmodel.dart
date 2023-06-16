@@ -1,17 +1,24 @@
 import 'package:food_xyz_project/repositories.dart';
 
 class BrowseViewModel extends ViewModel {
-
-  final tabController = useTabController(initialLength : 2);
-  final tabs = ['Tab 1', 'Tab 2'];
-
-
   final searchController = TextEditingController();
   //seluruh produk akan disimpan di variabel dibawah
   List<ProdukModel> masterData = [];
 
   final tokenStorage = const FlutterSecureStorage();
   late ApiProvider apiCall;
+
+  //filter
+  int activeFilter = 0;
+  Map<String, String> filterCategory = {
+    'Main Course': 'main_courses',
+    'Drinks': 'drinks',
+    'Desserts': 'desserts',
+    'Snacks': 'snacks',
+  };
+
+  //untuk carousel filter produk
+  PageController pageController = PageController(viewportFraction: 0.4);
 
   //controller disini dibuat agar setiap jumlah item dipilih di ListView bisa diubah
   List<TextEditingController> controllers = [];
@@ -29,13 +36,14 @@ class BrowseViewModel extends ViewModel {
 
   String getNamaProduk(int index) => _filteredData[index].namaProduk;
   String getRatingProduk(int index) => _filteredData[index].rating.toString();
-  String getHargaProduk(int index) => intToRupiah(_filteredData[index].hargaProduk);
+  String getHargaProduk(int index) =>
+      intToRupiah(_filteredData[index].hargaProduk);
+  String getFotoProduk(int index) => _filteredData[index].fotoProduk;
 
   String getIdProduk(int index) => _filteredData[index].idProduk;
 
   final List<CartModel> _cart = [];
   List<CartModel> get cart => _cart;
-
 
   //total harga keseluruhan produk yang dipilih
   int _total = 0;
@@ -54,8 +62,7 @@ class BrowseViewModel extends ViewModel {
   }
 
   Timer? _debounceTimerSearch;
-  Timer? _debounceTimerItem;
-
+  Timer? _debounceTimerChangeFilter;
   @override
   void dispose() {
     for (var controller in controllers) {
@@ -68,20 +75,15 @@ class BrowseViewModel extends ViewModel {
   void init() async {
     //ambil data dari luar terlebih dahulu
     apiCall = Get.find<ApiProvider>();
-    filteredData = await getMasterData();
+    await getMasterData();
   }
 
-
-  Future<List<ProdukModel>> getMasterData() async {
+  Future<void> getMasterData() async {
     try {
       isBusy = true;
       final token = await tokenStorage.read(key: 'accessToken');
       if (token == null) {
-        final error = {
-          'statusCode': 404,
-          'statusText': 'Token tidak ditemukan'
-        };
-        throw error;
+        throw AppError.tokenNotFound;
       }
 
       if (masterData.isNotEmpty) {
@@ -93,70 +95,62 @@ class BrowseViewModel extends ViewModel {
         masterData.add(ProdukModel.fromJson(result[n]));
       }
 
-      return Future.value(masterData);
-
+      filterProduk(searchController.text, activeFilter);
     } catch (e) {
-      if (e is Map<String, dynamic>) {
-        switch (e['statusCode']) {
-          case 401:
-            {
-              await showWarningDialog(
-                title: 'Token sudah kadaluarsa',
-                icon: Image.asset('assets/images/not_found.png'),
-                texts: ['Harap login kembali'],
-              );
-              Get.offNamed(Routes.login);
-            }
-            break;
-
-          case 404:
-            {
-              await showWarningDialog(
-                title: 'Kredensial akun tidak ditemukan',
-                icon: Image.asset('assets/images/not_found.png'),
-                texts: ['Harap login kembali'],
-              );
-              Get.offNamed(Routes.login);
-            }
-            break;
-        }
-      } else {
-        showWarningDialog(
-          title: 'Error Besar',
-          icon: Image.asset('assets/images/warning_sign.png'),
-          texts: ['Hubungi developer apabila anda melihat pesan ini'],
-        );
-      }
-
-      return Future.error(e);
+      errorHandler(e);
     } finally {
       isBusy = false;
     }
   }
 
+  void filterProduk(String value, int index) {
+    if (_debounceTimerChangeFilter != null &&
+        _debounceTimerChangeFilter!.isActive) {
+      _debounceTimerChangeFilter!.cancel();
+    }
+
+    _debounceTimerChangeFilter = Timer(const Duration(milliseconds: 400), () {
+      String searchValue = value.toLowerCase();
+      String namaFilter = filterCategory.keys.elementAt(index);
+      List<ProdukModel> temp = masterData
+          .where((element) =>
+              element.jenis == filterCategory[namaFilter] &&
+              (value.isEmpty ||
+                  element.namaProduk.toLowerCase().contains(searchValue)))
+          .toList();
+
+      activeFilter = index;
+      filteredData = temp;
+    });
+  }
+
   void onTambahJumlahProduk(TextEditingController controller) {
-    int qty = int.parse(controller.text);
-    qty++;
-    controller.text = qty.toString();
+    if (controller.text.isNotEmpty) {
+      int qty = int.parse(controller.text);
+      qty++;
+      controller.text = qty.toString();
+    }
   }
 
   void onJumlahProdukDikurang(String itemId, TextEditingController controller) {
-    int qty = int.parse(controller.text);
+    if (controller.text.isNotEmpty) {
+      int qty = int.parse(controller.text);
 
-    //ambil produk di keranjang menggunakan id
-    CartModel? itemToUpdate =
-        cart.firstWhereOrNull((element) => element.produk.idProduk == itemId);
+      //ambil produk di keranjang menggunakan id
+      CartModel? itemToUpdate =
+          cart.firstWhereOrNull((element) => element.produk.idProduk == itemId);
 
-    if (itemToUpdate != null) {
-      if (qty <= 0 && (-qty) >= itemToUpdate.qty) {
-        return; //kembali apabila qty di list menu melebihi jumlah qty di keranjang
+      if (itemToUpdate != null) {
+        if (qty <= 0 && (-qty) >= itemToUpdate.qty) {
+          return; //kembali apabila qty di list menu melebihi jumlah qty di keranjang
+        }
+      } else if (qty <= 0) {
+        return; // kemabli apabila qty di list menu 0
       }
-    } else if (qty <= 0) {
-      return; // kemabli apabila qty di list menu 0
-    }
 
-    qty--;
-    controller.text = qty.toString();
+      qty--;
+      controller.text = qty.toString();
+    }
   }
 
   void countTotal() {
@@ -167,23 +161,16 @@ class BrowseViewModel extends ViewModel {
     this.total = total;
   }
 
-  void onTotalItemKeywordChanged(
-      String value, TextEditingController controller) {
-    if (_debounceTimerItem?.isActive ?? false) {
-      _debounceTimerItem?.cancel();
+  void totalItemFocusChange(bool hasFocus, TextEditingController controller) {
+    if (hasFocus) {
+      if (controller.text == '0') {
+        controller.text = '';
+      }
+    } else {
+      if (controller.text.isBlank ?? false) {
+        controller.text = '0';
+      }
     }
-
-    _debounceTimerItem = Timer(
-      const Duration(milliseconds: 400),
-      () {
-        if (value.isBlank ?? false) {
-          controller.text = '0';
-        } else {
-          controller.text = value;
-          // update TextField
-        }
-      },
-    );
   }
 
   void onSearchKeywordChanged(String value) {
@@ -191,36 +178,25 @@ class BrowseViewModel extends ViewModel {
       _debounceTimerSearch!.cancel();
     }
 
-    _debounceTimerSearch = Timer(
-      const Duration(milliseconds: 500),
-      () {
-        String searchValue = value.toLowerCase();
-        List<ProdukModel> temp = [];
-        for (var element in masterData) {
-          if (element.namaProduk.toLowerCase().contains(searchValue)) {
-            temp.add(element);
-          }
-        }
-
-        filteredData = temp;
-      },
-    );
+    _debounceTimerSearch = Timer(const Duration(milliseconds: 500),
+        () => filterProduk(value, activeFilter));
   }
 
   void addToCart(String itemId, TextEditingController controller) {
-    if (controller.text != '0') {
+    if (controller.text.isNotEmpty && controller.text != '0') {
       ProdukModel? itemToAdded =
           masterData.firstWhereOrNull((element) => element.idProduk == itemId);
 
-      CartModel? currentItemOnCart =
-          cart.firstWhereOrNull((element) => element.produk == itemToAdded);
+      CartModel? currentItemOnCart = cart.firstWhereOrNull(
+          (element) => element.produk.idProduk == itemToAdded?.idProduk);
 
       if (itemToAdded != null) {
         if (currentItemOnCart != null) {
           currentItemOnCart.qty += int.parse(controller.text);
 
           if (currentItemOnCart.qty <= 0) {
-            cart.remove(currentItemOnCart);
+            cart.removeWhere((element) =>
+                element.produk.idProduk == currentItemOnCart.produk.idProduk);
           }
         } else {
           cart.add(

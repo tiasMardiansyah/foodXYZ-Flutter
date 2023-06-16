@@ -88,27 +88,7 @@ class DaftarViewModel extends ViewModel {
 
         goToLogin();
       } catch (e) {
-        if (e is Map<String, dynamic> && e['statusCode'] == 400) {
-          final rawWarningTexts = e['messages'] as Map<String, dynamic>;
-
-          final warningTexts = rawWarningTexts.entries
-              .map((entry) => '${entry.value}')
-              .toList();
-
-          await showWarningDialog(
-            title: 'Bad Request',
-            icon: Image.asset('assets/images/form.png'),
-            texts: warningTexts,
-          );
-        } else {
-          showWarningDialog(
-            title: 'Error besar',
-            icon: Image.asset('assets/images/warning_sign.png'),
-            texts: [
-              'Hubungi developer apabila anda melihat pesan ini',
-            ],
-          );
-        }
+        errorHandler(e, warningText: {400: getBadRequest(e)});
       } finally {
         isBusy = false;
       }
@@ -116,17 +96,13 @@ class DaftarViewModel extends ViewModel {
   }
 
   //kemungkinan akan dipisah --perlu di revisi kembali
-  List<Widget> displayRulesViolation(Map<String, dynamic> messages) {
-    List<Widget> text = [];
-    for (var key in messages.keys) {
-      text.add(
-        Text(
-          messages[key],
-          textAlign: TextAlign.center,
-        ),
-      );
+  List<String>? getBadRequest(dynamic e) {
+    Map<String, dynamic>? rawWarningTexts;
+    if (e is Map<String, dynamic> && e['statusCode'] == 400) {
+      rawWarningTexts = e['messages'] as Map<String, dynamic>;
     }
-    return text;
+
+    return rawWarningTexts?.entries.map((entry) => '${entry.value}').toList();
   }
 
   void goToLogin() => Get.back();
