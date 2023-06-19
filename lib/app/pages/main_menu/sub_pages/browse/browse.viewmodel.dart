@@ -181,9 +181,16 @@ class BrowseViewModel extends ViewModel {
   }
 
   void totalItemFocusChange(bool hasFocus, TextEditingController controller) {
+<<<<<<< HEAD
     hasFocus == true
         ? {if (controller.text == '0') controller.text = ''}
         : {if (controller.text.isBlank ?? false) controller.text = '0'};
+=======
+    hasFocus == true  
+      ? { if (controller.text == '0') controller.text = '';}
+      : { if (controller.text.isBlank ?? false) controller.text = '0';}
+    }
+>>>>>>> a7dc061e9d1bb55123917b5c84b9e4d3b6ad2fc7
   }
 
   void addToCart(String itemId, TextEditingController controller) {
