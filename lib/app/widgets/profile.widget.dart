@@ -24,7 +24,7 @@ class ProfileWidget extends StatelessWidget {
               horizontal: 15.0,
               vertical: 15.0,
             ),
-            child: Icon(Icons.home),
+            child: Icon(Icons.home, size: 40),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,

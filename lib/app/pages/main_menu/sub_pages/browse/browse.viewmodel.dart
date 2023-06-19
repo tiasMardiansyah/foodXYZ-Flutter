@@ -17,7 +17,7 @@ class BrowseViewModel extends ViewModel {
     'Snacks': 'snacks',
   };
 
-    Map<String, String> foodCategoryImage = {
+  Map<String, String> foodCategoryImage = {
     'Main Course': 'assets/images/roasted_chicken.png',
     'Drinks': 'assets/images/water.png',
     'Desserts': 'assets/images/cake.png',
@@ -181,15 +181,9 @@ class BrowseViewModel extends ViewModel {
   }
 
   void totalItemFocusChange(bool hasFocus, TextEditingController controller) {
-    if (hasFocus) {
-      if (controller.text == '0') {
-        controller.text = '';
-      }
-    } else {
-      if (controller.text.isBlank ?? false) {
-        controller.text = '0';
-      }
-    }
+    hasFocus == true
+        ? {if (controller.text == '0') controller.text = ''}
+        : {if (controller.text.isBlank ?? false) controller.text = '0'};
   }
 
   void addToCart(String itemId, TextEditingController controller) {

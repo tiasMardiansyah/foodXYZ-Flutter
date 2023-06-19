@@ -48,7 +48,7 @@ class _View extends StatelessView<BrowseViewModel> {
                             onRefresh: viewModel.getMasterData,
                             child:
                                 viewModel.selectedFoodCategory == pagePosition
-                                    ? createProductCard(viewModel)
+                                    ? createProductCard(viewModel, viewModel.foodCategory.keys.elementAt(pagePosition))
                                     : productCategory(viewModel, pagePosition),
                           ),
                         ),
@@ -115,9 +115,12 @@ class _View extends StatelessView<BrowseViewModel> {
   }
 
 //Untuk sementara disimpan secara terpisah sampai saya punya solusi lebih bagus, saya pisahkan terlebih dahulu karena alasan readability
-  Widget createProductCard(BrowseViewModel viewModel) {
+  Widget createProductCard(BrowseViewModel viewModel, String category) {
     return viewModel.filteredData.isEmpty
-        ? const ProductNotFound()
+        ? ProductNotFound(
+            produkDicari: viewModel.searchController.text,
+            kategori: category,
+          )
         : CustomScrollView(
             slivers: [
               SliverList(
@@ -257,11 +260,10 @@ class _View extends StatelessView<BrowseViewModel> {
                                       horizontal: 8.0,
                                     ),
                                     child: Container(
-                                      
                                       decoration: BoxDecoration(
-                                        color: Colors.blue,
-                                        borderRadius: BorderRadius.circular(15)
-                                      ),
+                                          color: Colors.blue,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
                                       child: IconButton(
                                         color: Colors.white,
                                         onPressed: () {

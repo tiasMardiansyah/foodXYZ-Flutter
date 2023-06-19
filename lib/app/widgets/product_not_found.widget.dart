@@ -1,7 +1,14 @@
 import 'package:food_xyz_project/repositories.dart';
 
 class ProductNotFound extends StatelessWidget {
-  const ProductNotFound({super.key});
+  const ProductNotFound({
+    super.key,
+    required this.produkDicari,
+    required this.kategori,
+  });
+
+  final String produkDicari;
+  final String kategori;
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +24,9 @@ class ProductNotFound extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Text(
-              "Tidak ada Barang",
+              "'$produkDicari' Untuk Kategori '$kategori' Tidak ditemukan",
               style: customHeaderBold(),
+              textAlign: TextAlign.center,
             ),
           ),
         ],
