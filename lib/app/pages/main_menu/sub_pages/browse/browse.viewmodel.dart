@@ -9,16 +9,23 @@ class BrowseViewModel extends ViewModel {
   late ApiProvider apiCall;
 
   //filter
-  int activeFilter = 0;
-  Map<String, String> filterCategory = {
+  int selectedFoodCategory = 0;
+  Map<String, String> foodCategory = {
     'Main Course': 'main_courses',
     'Drinks': 'drinks',
     'Desserts': 'desserts',
     'Snacks': 'snacks',
   };
 
-  //untuk carousel filter produk
-  PageController pageController = PageController(viewportFraction: 0.4);
+    Map<String, String> foodCategoryImage = {
+    'Main Course': 'assets/images/roasted_chicken.png',
+    'Drinks': 'assets/images/water.png',
+    'Desserts': 'assets/images/cake.png',
+    'Snacks': 'assets/images/nuggets.png',
+  };
+
+  //untuk effect carousel filter produk
+  PageController pageController = PageController(viewportFraction: 0.85);
 
   //controller disini dibuat agar setiap jumlah item dipilih di ListView bisa diubah
   List<TextEditingController> controllers = [];
@@ -95,7 +102,7 @@ class BrowseViewModel extends ViewModel {
         masterData.add(ProdukModel.fromJson(result[n]));
       }
 
-      filterProduk(searchController.text, activeFilter);
+      filterProduk(selectedFoodCategory);
     } catch (e) {
       errorHandler(e);
     } finally {
@@ -103,25 +110,37 @@ class BrowseViewModel extends ViewModel {
     }
   }
 
-  void filterProduk(String value, int index) {
+  void onPageChange(int currentPage) {
     if (_debounceTimerChangeFilter != null &&
         _debounceTimerChangeFilter!.isActive) {
       _debounceTimerChangeFilter!.cancel();
     }
 
-    _debounceTimerChangeFilter = Timer(const Duration(milliseconds: 400), () {
-      String searchValue = value.toLowerCase();
-      String namaFilter = filterCategory.keys.elementAt(index);
-      List<ProdukModel> temp = masterData
-          .where((element) =>
-              element.jenis == filterCategory[namaFilter] &&
-              (value.isEmpty ||
-                  element.namaProduk.toLowerCase().contains(searchValue)))
-          .toList();
+    _debounceTimerChangeFilter = Timer(
+        const Duration(milliseconds: 900), () => filterProduk(currentPage));
+  }
 
-      activeFilter = index;
-      filteredData = temp;
-    });
+  void onSearchKeywordChanged(String value) {
+    if (_debounceTimerSearch != null && _debounceTimerSearch!.isActive) {
+      _debounceTimerSearch!.cancel();
+    }
+
+    _debounceTimerSearch = Timer(const Duration(milliseconds: 500),
+        () => filterProduk(selectedFoodCategory));
+  }
+
+  void filterProduk(int currentPage) {
+    String namaKategori = foodCategory.keys.elementAt(currentPage);
+    String searchValue = searchController.text.toLowerCase();
+    List<ProdukModel> temp = masterData
+        .where((element) =>
+            element.jenis == foodCategory[namaKategori] &&
+            (searchValue.isEmpty ||
+                element.namaProduk.toLowerCase().contains(searchValue)))
+        .toList();
+
+    selectedFoodCategory = currentPage;
+    filteredData = temp;
   }
 
   void onTambahJumlahProduk(TextEditingController controller) {
@@ -171,15 +190,6 @@ class BrowseViewModel extends ViewModel {
         controller.text = '0';
       }
     }
-  }
-
-  void onSearchKeywordChanged(String value) {
-    if (_debounceTimerSearch != null && _debounceTimerSearch!.isActive) {
-      _debounceTimerSearch!.cancel();
-    }
-
-    _debounceTimerSearch = Timer(const Duration(milliseconds: 500),
-        () => filterProduk(value, activeFilter));
   }
 
   void addToCart(String itemId, TextEditingController controller) {

@@ -30,3 +30,11 @@ TextStyle? customTabBar({Color cr = const Color.fromARGB(255, 0, 0, 0)}) {
     color: Colors.black,
   );
 }
+
+TextStyle? customCategoryCardBold({Color cr = const Color.fromARGB(255, 0, 0, 0)}) {
+  return const TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    color: Color.fromARGB(255, 0, 0, 0),
+  );
+}
