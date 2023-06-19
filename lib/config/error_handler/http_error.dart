@@ -11,7 +11,7 @@ void httpErrorHandler(
         await showWarningDialog(
           title: 'Bad Request - 400',
           icon: Image.asset('assets/images/not_found.png'),
-          texts: customText?[statusCode] ?? ['Autentifikasi gagal'],
+          texts: customText?[statusCode] ?? ['apa yang anda masukan tidak sesuai dengan ketentuan'],
         );
 
         statusCodeEvent?[statusCode];
