@@ -181,14 +181,9 @@ class BrowseViewModel extends ViewModel {
   }
 
   void totalItemFocusChange(bool hasFocus, TextEditingController controller) {
-    if (hasFocus) {
-      if (controller.text == '0') {
-        controller.text = '';
-      }
-    } else {
-      if (controller.text.isBlank ?? false) {
-        controller.text = '0';
-      }
+    hasFocus == true  
+      ? { if (controller.text == '0') controller.text = '';}
+      : { if (controller.text.isBlank ?? false) controller.text = '0';}
     }
   }
 
