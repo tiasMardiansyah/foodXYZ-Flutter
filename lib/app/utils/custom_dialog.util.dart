@@ -16,6 +16,8 @@ Future<void> showWarningDialog({
       ),
     );
   }
+  
+  if (EasyLoading.isShow) EasyLoading.dismiss();
 
   return Get.defaultDialog(
     title: title,
@@ -62,6 +64,7 @@ Future<bool> showConfirmDialog({
     );
   }
 
+  if (EasyLoading.isShow) EasyLoading.dismiss();
   final completer = Completer<bool>();
   Get.defaultDialog(
     title: title,

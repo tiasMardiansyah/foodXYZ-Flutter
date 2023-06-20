@@ -84,6 +84,12 @@ class DetailTransaksiViewModel extends ViewModel {
 
   void shareTransaksi() async {
     try {
+      EasyLoading.show(
+        dismissOnTap: false,
+        status: "Making Invoice ...",
+        maskType: EasyLoadingMaskType.black,
+      );
+
       String? token = await tokenStorage.read(key: "accessToken");
       if (token == null) {
         throw AppError.tokenNotFound;
@@ -97,6 +103,8 @@ class DetailTransaksiViewModel extends ViewModel {
           filename: "Foodxyz-Invoice-(${userProfile.namaLengkap}).pdf");
     } catch (e) {
       errorHandler(e);
+    } finally {
+      if (EasyLoading.isShow) EasyLoading.dismiss();
     }
   }
 

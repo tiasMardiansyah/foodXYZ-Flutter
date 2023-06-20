@@ -3,14 +3,6 @@ import 'package:food_xyz_project/repositories.dart';
 class DaftarViewModel extends ViewModel {
   final formKey = GlobalKey<FormState>();
   late ApiProvider apiCall;
-  bool _isBusy = false;
-
-  bool get isBusy => _isBusy;
-  set isBusy(bool value) {
-    _isBusy = value;
-    notifyListeners();
-  }
-
   final formNamaLengkap = CustomTextFormField(
     displayText: 'Nama lengkap',
     errorMessage: 'Nama lengkap harus diisi',
@@ -69,7 +61,7 @@ class DaftarViewModel extends ViewModel {
 
   void registration() async {
     if (formKey.currentState!.validate()) {
-      isBusy = true;
+      EasyLoading.show(dismissOnTap: false, status: "Daftar ...",maskType: EasyLoadingMaskType.black);
       try {
         await apiCall.addAccount(
           namaLengkap: formNamaLengkap.controller!.text,
@@ -90,7 +82,7 @@ class DaftarViewModel extends ViewModel {
       } catch (e) {
         errorHandler(e, warningText: {400: getBadRequest(e)});
       } finally {
-        isBusy = false;
+        EasyLoading.dismiss();
       }
     }
   }

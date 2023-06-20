@@ -78,6 +78,11 @@ class InvoiceViewModel extends ViewModel {
 
   void shareInvoice() async {
     try {
+      EasyLoading.show(
+        dismissOnTap: false,
+        status: "Making Invoice ...",
+        maskType: EasyLoadingMaskType.black,
+      );
       String? token = await tokenStorage.read(key: "accessToken");
       if (token == null) {
         throw AppError.tokenNotFound;
@@ -90,6 +95,8 @@ class InvoiceViewModel extends ViewModel {
           filename: "Foodxyz-Invoice-(${userProfile.namaLengkap}).pdf");
     } catch (e) {
       errorHandler(e);
+    } finally {
+      EasyLoading.dismiss();
     }
   }
 
@@ -97,6 +104,12 @@ class InvoiceViewModel extends ViewModel {
     bool confirmed = await showConfirmDialog(texts: ["Tuntaskan Transaksi??"]);
     if (confirmed) {
       try {
+        EasyLoading.show(
+          dismissOnTap: false,
+          status: "Saving invoice ...",
+          maskType: EasyLoadingMaskType.black,
+        );
+
         String? token = await tokenStorage.read(key: "accessToken");
         if (token == null) {
           throw AppError.tokenNotFound;
@@ -124,6 +137,8 @@ class InvoiceViewModel extends ViewModel {
         close(isSaved: true);
       } catch (e) {
         errorHandler(e);
+      } finally {
+        if (EasyLoading.isShow) EasyLoading.dismiss();
       }
     }
   }

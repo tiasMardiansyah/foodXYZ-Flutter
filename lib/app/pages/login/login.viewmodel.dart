@@ -7,13 +7,6 @@ class LoginViewModel extends ViewModel {
   final tokenStorage = const FlutterSecureStorage();
   late ApiProvider apiCall;
 
-  bool _isBusy = false;
-  bool get isBusy => _isBusy;
-  set isBusy(bool value) {
-    _isBusy = value;
-    notifyListeners();
-  }
-
   @override
   void dispose() {
     usernameController.dispose();
@@ -30,9 +23,14 @@ class LoginViewModel extends ViewModel {
 
   void validate() async {
     if (formkey.currentState!.validate()) {
-      Map<String, dynamic>? result;
-      isBusy = true;
+      EasyLoading.show(
+        dismissOnTap: false,
+        status: "Login ...",
+        maskType: EasyLoadingMaskType.black,
+      );
+
       try {
+        Map<String, dynamic>? result;
         result = await apiCall.login(
           username: usernameController.text,
           password: passwordController.text,
@@ -51,12 +49,10 @@ class LoginViewModel extends ViewModel {
           ]
         });
       } finally {
-        isBusy = false;
+        EasyLoading.dismiss();
       }
     }
   }
 
-  void goToDaftar() => Get.toNamed(
-        Routes.daftar,
-      );
+  void goToDaftar() => Get.toNamed(Routes.daftar);
 }

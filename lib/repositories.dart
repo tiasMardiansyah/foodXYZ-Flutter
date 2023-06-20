@@ -10,6 +10,7 @@ export 'package:cached_network_image/cached_network_image.dart';
 export 'package:data_table_2/data_table_2.dart';
 export 'package:printing/printing.dart';
 export 'package:lottie/lottie.dart';
+export 'package:flutter_easyloading/flutter_easyloading.dart';
 // export 'package:internet_connection_checker/internet_connection_checker.dart';
 
 //depedency from project folder

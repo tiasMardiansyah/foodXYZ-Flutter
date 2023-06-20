@@ -8,6 +8,7 @@ void main() async {
       getPages: routes,
       initialRoute: '/',
       initialBinding: MainBinding(),
+      builder: EasyLoading.init()
     ),
   );
 }
