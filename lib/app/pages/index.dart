@@ -4,4 +4,5 @@ export 'keranjang/index.dart';
 export 'main_menu/index.dart';
 export 'log_transaksi/index.dart';
 export 'detail_transaksi/index.dart';
+export 'opening_screen/index.dart';
 export 'pdf/index.dart';

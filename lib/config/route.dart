@@ -49,4 +49,9 @@ var routes = [
     page: () => const PdfView(),
     transition: Transition.cupertino,
   ),
+  GetPage(
+    name: '/',
+    page: () => const OpeningScreen(),
+    transition: Transition.cupertino,
+  ),
 ];
