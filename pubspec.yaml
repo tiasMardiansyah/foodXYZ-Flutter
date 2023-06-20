@@ -47,6 +47,7 @@ dependencies:
   uni_links: ^0.5.1
   pdf: ^3.10.4
   printing: ^5.11.0
+  flutter_native_splash: ^2.3.1
   
 dev_dependencies:
   flutter_test:
@@ -99,3 +100,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_native_splash:
+  color: ""
+  image: assets/ 

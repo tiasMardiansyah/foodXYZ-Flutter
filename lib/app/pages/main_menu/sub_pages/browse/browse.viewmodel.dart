@@ -203,12 +203,14 @@ class BrowseViewModel extends ViewModel {
                 element.produk.idProduk == currentItemOnCart.produk.idProduk);
           }
         } else {
-          cart.add(
+          if (int.parse(controller.text) > 0) {
+            cart.add(
             CartModel(
-              itemToAdded,
-              int.parse(controller.text),
+              produk: itemToAdded,
+              qty: int.parse(controller.text),
             ),
           );
+          }
         }
 
         //lakukan penghitungan keseluruhan

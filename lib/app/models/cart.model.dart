@@ -4,20 +4,16 @@ class CartModel {
   ProdukModel produk;
   int qty;
 
-  CartModel(this.produk, this.qty);
+  CartModel({required this.produk, required this.qty});
 
-  Map<String,dynamic> toJson() {
-
+  Map<String, dynamic> toJson() {
     var ketProduk = {
-      "id_produk" : produk.idProduk,
-      "nama_produk" : produk.namaProduk,
-      "harga_produk" : produk.hargaProduk, 
+      "id_produk": produk.idProduk,
+      "nama_produk": produk.namaProduk,
+      "harga_produk": produk.hargaProduk,
     };
 
-    var json = {
-      "produk" : ketProduk,
-      "qty" : qty
-    };
+    var json = {"produk": ketProduk, "qty": qty};
 
     return json;
   }

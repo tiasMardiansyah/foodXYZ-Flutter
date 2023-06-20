@@ -20,9 +20,12 @@ class ProfileViewModel extends ViewModel {
   late ApiProvider apiCall;
 
   @override
-  void init() async {
+  void init() {
     apiCall = Get.find<ApiProvider>();
-    await getUserProfile();
+    //saya sementara pakai timer karena kemungkinan request produk dan request profil saling timpa, karena indexedStack
+    Timer(const Duration(milliseconds: 2500), () {
+        getUserProfile();
+    } );
   }
 
   Future<void> getUserProfile() async {

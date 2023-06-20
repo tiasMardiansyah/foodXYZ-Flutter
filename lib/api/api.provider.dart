@@ -9,8 +9,11 @@ class ApiProvider extends GetConnect {
   @override
   void onInit() {
     httpClient.baseUrl = ApiConfig.baseUrl;
-    httpClient.defaultContentType = 'application/x-www-form-urlencoded';
+    httpClient.defaultContentType = 'application/json';
   }
+
+  @override
+  void dispose() {}
 
   Future<Map<String, dynamic>> addAccount({
     required String namaLengkap,
@@ -21,9 +24,7 @@ class ApiProvider extends GetConnect {
     required String passwordConfirm,
   }) async {
     try {
-      bool isConnected = await InternetConnectionChecker().hasConnection;
-      if (!isConnected) throw AppError.noConnection;
-      final data = {
+      final httpBody = {
         'nama-lengkap': namaLengkap,
         'username': username,
         'alamat': alamat,
@@ -32,16 +33,9 @@ class ApiProvider extends GetConnect {
         'password-confirm': passwordConfirm
       };
 
-      //ubah data dalam map agar diterima oleh x-www-form-encoded
-      final encodedData = data.entries.map(
-        (e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
-      );
-      final body = encodedData.join('&');
-
-      final response = await request(
+      final response = await post(
         ApiEndPoint.daftar,
-        'POST',
-        body: body,
+        httpBody,
       );
 
       if (response.hasError) {
@@ -70,24 +64,15 @@ class ApiProvider extends GetConnect {
     required password,
   }) async {
     try {
-      bool isConnected = await InternetConnectionChecker().hasConnection;
-      if (!isConnected) throw AppError.noConnection;
-
-      final data = {
+      final httpBody = {
         'grant_type': 'password',
         'username': username,
         'password': password,
       };
 
-      final encodedData = data.entries.map(
-        (e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
-      );
-      final body = encodedData.join('&');
-
-      final response = await request(
+      final response = await post(
         ApiEndPoint.login,
-        'POST',
-        body: body,
+        httpBody,
         headers: {
           'Authorization': 'Basic ${base64.encode(
             utf8.encode('$authUsername:$authPassword'),
@@ -117,9 +102,8 @@ class ApiProvider extends GetConnect {
 
   Future<Map<String, dynamic>> getProfile(String token) async {
     try {
-      final response = await request(
+      final response = await get(
         ApiEndPoint.profile,
-        'GET',
         headers: {'Authorization': 'Bearer $token'},
       );
 
@@ -140,14 +124,9 @@ class ApiProvider extends GetConnect {
 
   Future<dynamic> getProduk(String token) async {
     try {
-      bool isConnected = await InternetConnectionChecker().hasConnection;
-      if (!isConnected) throw AppError.noConnection;
-      final response = await request(
+      final response = await get(
         ApiEndPoint.produk,
-        'GET',
-        headers: {
-          'Authorization': 'bearer $token',
-        },
+        headers: {'Authorization': 'bearer $token'},
       );
 
       if (response.hasError) {
@@ -167,12 +146,8 @@ class ApiProvider extends GetConnect {
 
   Future<dynamic> getLogTransaksi(String token) async {
     try {
-      bool isConnected = await InternetConnectionChecker().hasConnection;
-      if (!isConnected) throw AppError.noConnection;
-
-      final response = await request(
+      final response = await get(
         ApiEndPoint.logTransaksi,
-        'Get',
         headers: {'Authorization': 'bearer $token'},
       );
 
@@ -192,26 +167,17 @@ class ApiProvider extends GetConnect {
   Future<Map<String, dynamic>> createLogTransaksi(
       List<CartModel> cart, int totalBayar, String token) async {
     try {
-      bool isConnected = await InternetConnectionChecker().hasConnection;
-      if (!isConnected) throw AppError.noConnection;
-
       //ubah menjadi json
       final jsonString = jsonEncode(cart);
 
-      final data = {
+      final httpBody = {
         "invoice-detail": jsonString,
         "total-bayar": totalBayar.toString(),
       };
 
-      final encodedData = data.entries.map(
-        (e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
-      );
-      final body = encodedData.join('&');
-
-      final response = await request(
+      final response = await post(
         ApiEndPoint.logTransaksi,
-        "POST",
-        body: body,
+        httpBody,
         headers: {'Authorization': 'bearer $token'},
       );
 
@@ -231,12 +197,8 @@ class ApiProvider extends GetConnect {
   Future<Map<String, dynamic>> deleteLogTransaksi(
       String token, String id) async {
     try {
-      bool isConnected = await InternetConnectionChecker().hasConnection;
-      if (!isConnected) throw AppError.noConnection;
-
-      final response = await request(
+      final response = await delete(
         ApiEndPoint.getLogTransaksi(id: id),
-        "DELETE",
         headers: {"Authorization": "bearer $token"},
       );
 
